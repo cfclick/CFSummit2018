@@ -1,4 +1,4 @@
 <cfscript>
- 	uHelper = new UrlHelper();	
- 	writeDump(uHelper.startWebSiteDownloadSync());
+ 	Executors = createobject('java','java.util.concurrent.Executors');
+ 	writeDump(Executors);
 </cfscript>
