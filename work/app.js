@@ -1,10 +1,19 @@
 $(document).ready(function(){
-
+	
+	var theActualServer = window.location.host;//with port number
+	var protocol = window.location.protocol +"//";
+	var appFolder = "/CFSummit2018";
+	var CGIScriptName = "";
+	//var theActualServer = window.location.hostname; //without port number
+	//console.log()
+	var urls = {};
+	urls.home = protocol + theActualServer + appFolder + CGIScriptName;
+	
     $('#sync_btn').off('click').on('click', function(target){
-
+		var url = urls.home + "/work/UrlHelper.cfc?method=startWebSiteDownloadSync";
         $.ajax({
             type: "get",
-            url: "http://shirak-dell/CFSummit2018/work/UrlHelper.cfc?method=startWebSiteDownloadSync",
+            url: url,
             
             beforeSend: function (xhr) {
                 $('#sync_result_div').html("<i class='fa fa-spinner fa-spin fa-3x fa-fw'></i>");
@@ -45,9 +54,10 @@ $(document).ready(function(){
     });
 
     $('#async_btn').off('click').on('click', function(target){
+    	var url = urls.home + "/work/UrlHelper.cfc?method=startWebSiteDownloadASync";
         $.ajax({
             type: "get",
-            url: "http://shirak-dell/CFSummit2018/work/UrlHelper.cfc?method=startWebSiteDownloadASync",
+            url: url,
             
             beforeSend: function (xhr) {
                 $('#async_result_div').html("<i class='fa fa-spinner fa-spin fa-3x fa-fw'></i>");
@@ -90,9 +100,10 @@ $(document).ready(function(){
     });
 
     $('#async_await_btn').off('click').on('click', function(target){
+    	var url = urls.home + "/work/UrlHelper.cfc?method=startWebSiteDownloadASyncAwait";
         $.ajax({
             type: "get",
-            url: "http://shirak-dell/CFSummit2018/work/UrlHelper.cfc?method=startWebSiteDownloadASyncAwait",
+            url: url,
             
             beforeSend: function (xhr) {
                 $('#async_result_div').html("<i class='fa fa-spinner fa-spin fa-3x fa-fw'></i>");
