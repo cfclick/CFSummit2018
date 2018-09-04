@@ -42,11 +42,15 @@
 	*/
 	
 	start_time = gettickCount()/1000;
+	
+	
 	future3 = runAsync( insertYourCard, 3000 )
 						.then( validatePin, 3000)
 						.then( deposit, 3000)
-						.then( printReceipt );
-						//.error( onError );
+						.then( printReceipt )
+						.error( onError );
+	
+	
 	
 	end_time = gettickCount()/1000;
 	writeOutput("Execution Time: <br>");
@@ -54,7 +58,18 @@
 	writeOutput("<br>");
 	writeOutput("Future: <br>");
 	//writeoutput(future3.get());
-		
+	writeOutput("<br>");
+	
+	start_time2 = gettickCount()/1000;
+	pinNumber = insertYourCard();
+	valid = validatePin(pinNumber);
+	amount = deposit(valid);
+	result = printReceipt(amount);
+	end_time2 = gettickCount()/1000;
+	writeOutput("Execution Time: <br>");
+	writeOutput(end_time2-start_time2);
+	writeOutput("<br>");
+	
 	function insertYourCard(){
 		sleep(1000);
 		pinNumber = 1111;
