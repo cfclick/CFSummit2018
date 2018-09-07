@@ -19,7 +19,7 @@
 		
 		<div class="container-fluid">
 			<h1>
-				sync-a-sync!
+				sync-a-sync! (Server)
 			</h1>
 			<div class="row">
 				
@@ -30,7 +30,7 @@
 									Sync (Normal)
 								</h5>
 								<h6 class="card-subtitle mb-2 text-muted">
-									Synchronous
+									Synchronous Server
 								</h6>
 								<p class="card-text">
 									Run the code in sequence order (one after another)
@@ -55,7 +55,7 @@
 									Async
 								</h5>
 								<h6 class="card-subtitle mb-2 text-muted">
-									Asynchronous
+									Asynchronous Server
 								</h6>
 								<p class="card-text">
 									Run the code in parallel order
@@ -120,7 +120,86 @@
 					</div>
 				
 			</div>
+			<h1>
+				sync-a-sync! (Client)
+			</h1>
+			<div class="row">
+				
+					<div class="col-md-4">
+						<div class="card" >
+							<div class="card-body">
+								<h5 class="card-title">
+									Sync (Normal)
+								</h5>
+								<h6 class="card-subtitle mb-2 text-muted">
+									Synchronous Client
+								</h6>
+								<p class="card-text">
+									Run the code in sequence order (one after another)
+								</p>
+								<a href="#" id="client_sync_btn" class="btn btn-primary">Normal (sync)</a>
+								<br><br>
+								<div class="list-group" id="client_sync_result_div">
+									
+									
+								  </div>
+								<!--<ul id="sync_result_div" style="padding-top:15px" >
+								</ul>-->
+								
 
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="card" >
+							<div class="card-body">
+								<h5 class="card-title">
+									Async
+								</h5>
+								<h6 class="card-subtitle mb-2 text-muted">
+									Asynchronous Client
+								</h6>
+								<p class="card-text">
+									Run the code in parallel order
+								</p>
+								<a href="#" id="client_async_btn" class="btn btn-primary">async</a>
+								<a href="#" id="client_async_await_btn" class="btn btn-primary">async/await</a>
+								<br><br>
+								<div class="list-group" id="client_async_result_div">
+									
+								  </div>
+								<!--<ul id="async_result_div">
+									
+								</ul>-->
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						
+						<div class="card" >
+							<div class="card-body">
+								
+								<h6 class="card-subtitle mb-2 text-muted">
+									Asynchronous Client
+								</h6>
+								
+
+								<p class="card-text">
+									Total Client sync duration: <span id="client_total_sync_duration"></span>
+								</p>
+
+								<p class="card-text">
+									Total Client async duration: <span id="client_total_async_duration"></span>
+								</p>
+
+								<p class="card-text">
+									Total Client async/await duration: <span id="client_total_async_await_duration"></span>
+								</p>
+							</div>
+						</div>
+					</div>
+				
+			</div>
 		</div>
 		
 		<!-- Optional JavaScript -->
