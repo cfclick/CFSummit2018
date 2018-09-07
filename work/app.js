@@ -6,7 +6,7 @@ $(document).ready(function(){
 
         $.ajax({
             type: "get",
-            url: "http://shirak-dell/CFSummit2018/work/UrlHelper.cfc?method=startWebSiteDownloadSync",
+            url: "http://localhost/CFSummit2018/work/UrlHelper.cfc?method=startWebSiteDownloadSync",
             
             beforeSend: function (xhr) {
                 $('#sync_result_div').html("<i class='fa fa-spinner fa-spin fa-3x fa-fw'></i>");
@@ -14,7 +14,7 @@ $(document).ready(function(){
             },
             async: true
         }).done(function (response) {
-           // $('#sync_result_div').html(response);
+           
            result = JSON.parse(response);
             if( result ){
                 totalDueration = 0;
