@@ -1,0 +1,89 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../assets/bootstrap/css/bootstrap.min.css" 
+    integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" 
+    crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    
+  </head>
+  <body>
+    <span id="csprice">Waiting for price updates from Bittrex...</span>
+    <br>
+    <span id="csprice_eth">Waiting for ETH price updates from Bittrex...</span>
+    <br>
+    <span id="csprice_ltc">Waiting for LTC price updates from Bittrex...</span>
+  </body>
+</html>
+
+
+ <!-- Optional JavaScript -->
+		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+		<script	src="https://code.jquery.com/jquery-3.3.1.min.js"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous">
+        </script>
+
+       
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" 
+                integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" 
+                crossorigin="anonymous">
+
+        </script>
+        <script src="../../assets/bootstrap/js/bootstrap.min.js" 
+                integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" 
+                crossorigin="anonymous">
+
+        </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pusher/2.1.6/pusher.min.js"></script>
+
+<script>
+  Pusher.host = 'slanger1.chain.so'; // our server
+  Pusher.ws_port = 443; // our server's port
+  Pusher.wss_port = 443; // ...
+  
+  // create the pusher client connection
+  var pusher = new Pusher('e9f5cc20074501ca7395', { encrypted: true, disabledTransports: ['sockjs'], disableStats: true });
+  
+  // subscribe to the channel for BTC/USD updates
+  var ticker_btc = pusher.subscribe('ticker_btc_usd');
+  var ticker_ltc = pusher.subscribe('ticker_ltc_usd');
+  var ticker_eth = pusher.subscribe('ticker_eth_usd');
+  
+  ticker_btc.bind('price_update', function(data) {
+      // show price updates
+      if (data.type == "price" && data.value.exchange=="bitstamp") {
+      $('span#csprice').replaceWith('<span id="csprice">' + data.value.price + ' BTC/'+data.value.price_base+'</span>')
+      }
+      });
+  
+      
+  
+      ticker_ltc.bind('price_update', function(data) {
+      // show price updates
+      if (data.type == "price" && data.value.exchange=="bitstamp") {
+      $('span#csprice_ltc').replaceWith('<span id="csprice_ltc">' + data.value.price + ' LTC/'+data.value.price_base+'</span>')
+      }
+      });
+
+      ticker_eth.bind('price_update', function(data) {
+      // show price updates
+      if (data.type == "price" && data.value.exchange=="bitstamp") {
+      $('span#csprice_eth').replaceWith('<span id="csprice_eth">' + data.value.price + ' ETH/'+data.value.price_base+'</span>')
+      }
+      });
+  </script>
+  
+  
+ <!-- 
+<script>
+$.get( "https://chain.so/api/v2/get_info", function( response ) {
+  $( "body" )
+    .append( "Name: " + response.data.name + "<br/>" ) // Dogecoin
+    .append( "Total Blocks: " + response.data.blocks + "</br>"); //  current block count
+}, "json" );
+</script>
+-->
+
+
+
