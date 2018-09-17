@@ -1,0 +1,22 @@
+/* YOUR CUSTOM STYLES */
+html,body{
+	
+	/*font-size:12px;*/
+	height: 100%;
+	/*background-color:#ece9e6;*/
+	
+ /*background-color: #c3c3c3;*/
+	
+	/*background:linear-gradient(
+      rgba(79, 88, 157, 1.00), 
+      rgba(63, 70, 124, 1.00)
+    );*/
+	background: 
+    linear-gradient(
+      rgba(62, 69, 81, 0.7), 
+      rgba(62, 69, 81, 0.7)
+    ),
+    url('../../images/hand4.jpg?v=1') no-repeat center center scroll;
+    background-size: 100% auto;
+    background-attachment: fixed;
+}

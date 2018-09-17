@@ -4,7 +4,13 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Demo01",
+            "url": "http://localhost/CFSummit2018/src/Demo01",
+            "webRoot": "${workspaceFolder}"
+        },
         {
             "type": "chrome",
             "request": "launch",
@@ -16,7 +22,7 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Launch /CFSummit2018/src/Demo02/",
+            "name": "Launch Demo02",
             "url": "http://localhost/CFSummit2018/src/Demo02",
             "webRoot": "${workspaceFolder}"
         }

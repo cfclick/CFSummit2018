@@ -12,7 +12,7 @@ $(document).ready(function(){
                 $('#sync_result_div').html("<i class='fa fa-spinner fa-spin fa-3x fa-fw'></i>");
                 $("#total_sync_duration").html("");
             },
-            async: true
+            async: false
         }).done(function (response) {
            
            result = JSON.parse(response);
@@ -51,7 +51,7 @@ $(document).ready(function(){
                 $('#async_result_div').html("<i class='fa fa-spinner fa-spin fa-3x fa-fw'></i>");
                 $("#total_async_duration").html("");
             },
-            async: true
+            async: false
         }).done(function (response) {
             result = JSON.parse(response);
             if( result ){
@@ -130,9 +130,10 @@ $(document).ready(function(){
 
     $('#sync_func_btn').off('click').on('click', function(target){
         
-        var siteName = WebSiteDownload_sync();
-        console.log(siteName);
-        crawl_sync(siteName);
+        var promise = WebSiteDownload_sync();
+        console.log(promise);
+       // crawl_sync(promise);
+        crawl_sync_noPromise(promise);
         assemblePDF_sync();
     });
 
@@ -144,6 +145,7 @@ $(document).ready(function(){
 
     function WebSiteDownload_sync(){
         let promise = new Promise((resolve, reject) => {
+            
             setTimeout(() => {
                 console.log("WebSiteDownload_sync executed" )
                 resolve("https://adobe.com")
@@ -153,9 +155,22 @@ $(document).ready(function(){
        
     }
 
-    function crawl_sync(siteName){
+    function crawl_sync_noPromise(result){
+        setTimeout(() => {          
+            var siteName = result;
+            console.log(siteName);
+            console.log("crawl_sync_noPromise executed for " + siteName );
+        }, 4300);
+    }
+
+    function crawl_sync(promise){
         setTimeout(() => {
-            console.log("crawl_sync executed for " + siteName )
+            promise.then(function(result){
+                var siteName = result;
+                console.log(siteName);
+                console.log("crawl_sync executed for " + siteName );
+            });
+            
         }, 4300);
     }
 
@@ -177,7 +192,7 @@ $(document).ready(function(){
     async function WebSiteDownload(){
         let promise = new Promise((resolve, reject) => {
             setTimeout(() => {
-                console.log("WebSiteDownload executed" )
+                console.log("WebSiteDownload ASYNC executed" )
                 resolve("https://adobe.com")
             }, 2700)
         });
@@ -190,13 +205,13 @@ $(document).ready(function(){
 
     async function crawl(siteName){
         setTimeout(() => {
-            console.log("crawl executed for " + siteName )
+            console.log("crawl ASYNC executed for " + siteName )
         }, 4300);
     }
 
     async function assemblePDF(){
         setTimeout(() => {
-            console.log("assemblePDF executed")
+            console.log("assemblePDF ASYNC executed")
         }, 10000);
     }
 });
