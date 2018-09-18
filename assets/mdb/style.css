@@ -19,4 +19,8 @@ html,body{
     url('../../images/hand4.jpg?v=1') no-repeat center center scroll;
     background-size: 100% auto;
     background-attachment: fixed;
+
 }
+
+#orders_placeholder {width:220px;margin:0 auto;}
+#orders_placeholder > li {list-style:none;}
