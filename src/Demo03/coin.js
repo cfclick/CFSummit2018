@@ -54,7 +54,7 @@ $(document).ready(function () {
         if (data.type == "price" && data.value.exchange=="bitstamp") {
           $('span#csprice').replaceWith('<span id="csprice">$' + data.value.price + ' ' + data.value.price_base+'</span>')
           $('#time_updated_btc').html('Last Time updated: ' + data.value.time );
-          $('#sym_btc_cur').html(data.value.symbol + '/' + data.value.price_base );
+          $('#sym_btc_cur').html(data.value.symbol );
           
         }
     });
@@ -76,14 +76,14 @@ $(document).ready(function () {
 
     ticker_dash.bind('price_update', function(data) {
       // show price updates
-      if (data.type == "price" && data.value.exchange=="bitstamp") {
+      if (data.type == "price" && data.value.exchange=="bitfinex") {
         $('span#csprice_dash').replaceWith('<span id="csprice_dash">$' + data.value.price + ' DASH/'+data.value.price_base+'</span>')
       }
     });
 
     ticker_zcash.bind('price_update', function(data) {
       // show price updates
-      if (data.type == "price" && data.value.exchange=="bitstamp") {
+      if (data.type == "price" && data.value.exchange=="bitfinex") {
         $('span#csprice_zcash').replaceWith('<span id="csprice_zcash">$' + data.value.price + ' ZEC/'+data.value.price_base+'</span>')
       }
     });
@@ -109,7 +109,7 @@ $(document).ready(function () {
     async function listAllCryptocurrencies(){
         $.ajax({
             type: "get",
-            url: "http://shirak-dell/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=listAllCryptocurrencies",
+            url: "http://localhost/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=listAllCryptocurrencies",
            
             beforeSend: function (xhr) {
               
@@ -173,7 +173,7 @@ $(document).ready(function () {
     async function listHistoricalData(){
         $.ajax({
             type: "get",
-            url: "http://shirak-dell/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=listHistoricalData",
+            url: "http://localhost/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=listHistoricalData",
            
             beforeSend: function (xhr) {
               
