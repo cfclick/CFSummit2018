@@ -7,8 +7,23 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Launch Chrome against /CFSummit2018/work/",
-            "url": "http://shirak-dell/CFSummit2018/work/",
+            "name": "Launch Demo01",
+            "url": "http://localhost/CFSummit2018/src/Demo01",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch /CFSummit2018/work/",
+            "url": "http://localhost/CFSummit2018/work/",
+            "webRoot": "${workspaceFolder}"
+        },
+
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Demo02",
+            "url": "http://localhost/CFSummit2018/src/Demo02",
             "webRoot": "${workspaceFolder}"
         }
     ]
