@@ -1,10 +1,12 @@
-/*function Coin(){
-
+function Coin(){
+    //coin = constructor();
     coin = this;
     this.arrayOfDataTable = [];
+    this.arrayOfHistoricalPrice = [];
 
-    this.load_data_btn  = $('#load_data_btn');
-    this.placeholder    = $('#orders_placeholder');
+    this.load_data_btn      = $('#load_data_btn');
+    this.placeholder        = $('#orders_placeholder');
+    this.news_sideModalTR   = $('#news_sideModalTR');
     
     this.pusher_02      = new Pusher('de504dc5763aeef9ff52');
     this.ordersChannel  = this.pusher_02.subscribe('live_orders');
@@ -27,11 +29,19 @@
 
     $('.mdb-select').material_select();
 
+    (async (f1) => {
+        await f1.listAllCryptocurrenciesasync().then( f1.renderDataTable() ); 
+    })(this);
+
+    (async (f2) => {
+        await f2.listHistoricalData().then( f2.renderChart() ); 
+       
+    })(this);
+
+
+   // this.loadHistoricalData();
+    this.getOrders();
     this.setEventListener();
-
-    this.loadAllCrypto();
-    this.listHistoricalData();
-
 
 }
 
@@ -85,7 +95,9 @@ Coin.prototype.setEventListener = function(){
 
     coin.load_data_btn.off('click').on('click', () => {
        
-        coin.loadAllCrypto();
+        (async (f1) => {
+            await f1.listAllCryptocurrenciesasync().then( f1.renderDataTable() ); 
+        })(this);
 
     });
 
@@ -103,13 +115,21 @@ Coin.prototype.getOrders = function(){
     });
 
 }
-
+/*
 Coin.prototype.loadAllCrypto = async function(){
+
+    
     coin = this;
-    await coin.listAllCryptocurrencies();
+    await coin.listAllCryptocurrenciesasync();
     coin.renderDataTable();
 }
 
+Coin.prototype.loadHistoricalData = async function(){
+    coin = this;
+    await coin.listHistoricalData();
+    await coin.renderChart();
+}
+*/
 Coin.prototype.listAllCryptocurrenciesasync = async function(){
     $.ajax({
         type: "get",
@@ -122,6 +142,7 @@ Coin.prototype.listAllCryptocurrenciesasync = async function(){
     }).done(function (response) {
        
         coin.arrayOfDataTable = JSON.parse(response);
+       
         
     }).fail(function (xhr) {
         console.log(xhr);
@@ -131,7 +152,7 @@ Coin.prototype.listAllCryptocurrenciesasync = async function(){
 
 Coin.prototype.renderDataTable = async function(){
     $('#example').DataTable( {
-        data: arrayOfDataTable.data,
+        data: coin.arrayOfDataTable.data,
         destroy: true,
         searching: true,
         lengthChange: false,
@@ -170,7 +191,7 @@ Coin.prototype.renderDataTable = async function(){
 Coin.prototype.listHistoricalData = async function(){
     $.ajax({
         type: "get",
-        url: "http://localhost/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=listHistoricalData",
+        url: "http://localhost/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=listHistoricalData&theYear=2018",
        
         beforeSend: function (xhr) {
           
@@ -179,57 +200,11 @@ Coin.prototype.listHistoricalData = async function(){
     }).done(function (response) {
        
         let arrayOflistHistoricalData = JSON.parse(response);
-        let arrayOfHistoricalPrice = [];
+        
         arrayOflistHistoricalData.forEach(element => {
             let elem = JSON.parse(element);
-            arrayOfHistoricalPrice.push(elem.rates.BTC);
+            coin.arrayOfHistoricalPrice.push(elem.rates.BTC);
 
-        });
-
-        //console.log(arrayOfHistoricalPrice);
-
-        //Main chart
-        var ctxL = document.getElementById("lineChart").getContext('2d');
-        var myLineChart = new Chart(ctxL, {
-            type: 'line',
-            data: {
-                labels: ["January", "February", "March", "April", "May", "June", "July","August","September"],
-                datasets: [{
-                    label: "BTC Price for 2018",
-                    fillColor: "#fff",
-                    backgroundColor: 'rgba(255, 255, 255, .3)',
-                    borderColor: 'rgba(255, 99, 132)',
-                    data: arrayOfHistoricalPrice,
-                }]
-            },
-            options: {
-                legend: {
-                    labels: {
-                        fontColor: "#fff",
-                    }
-                },
-                scales: {
-                    xAxes: [{
-                        gridLines: {
-                            display: true,
-                            color: "rgba(255,255,255,.25)"
-                        },
-                        ticks: {
-                            fontColor: "#fff",
-                        },
-                    }],
-                    yAxes: [{
-                        display: true,
-                        gridLines: {
-                            display: true,
-                            color: "rgba(255,255,255,.25)"
-                        },
-                        ticks: {
-                            fontColor: "#fff",
-                        },
-                    }],
-                }
-            }
         });
         
     }).fail(function (xhr) {
@@ -238,9 +213,55 @@ Coin.prototype.listHistoricalData = async function(){
     });
 
 
-}*/
+}
 
+Coin.prototype.renderChart = async function(){
+      //Main chart
+      let ctxL = document.getElementById("lineChart").getContext('2d');
+      let myLineChart = new Chart(ctxL, {
+          type: 'line',
+          data: {
+              labels: ["January", "February", "March", "April", "May", "June", "July","August","September","October","November","December"],
+              datasets: [{
+                  label: "BTC Price for 2018",
+                  fillColor: "#fff",
+                  backgroundColor: 'rgba(255, 255, 255, .3)',
+                  borderColor: 'rgba(255, 99, 132)',
+                  data: coin.arrayOfHistoricalPrice,
+              }]
+          },
+          options: {
+              legend: {
+                  labels: {
+                      fontColor: "#fff",
+                  }
+              },
+              scales: {
+                  xAxes: [{
+                      gridLines: {
+                          display: true,
+                          color: "rgba(255,255,255,.25)"
+                      },
+                      ticks: {
+                          fontColor: "#fff",
+                      },
+                  }],
+                  yAxes: [{
+                      display: true,
+                      gridLines: {
+                          display: true,
+                          color: "rgba(255,255,255,.25)"
+                      },
+                      ticks: {
+                          fontColor: "#fff",
+                      },
+                  }],
+              }
+          }
+      });
+}
 
+/*
 $(document).ready(function () {
 
 
@@ -479,4 +500,4 @@ $(document).ready(function () {
 
     }
 
-  });
+  });*/
