@@ -1,4 +1,248 @@
+/*function Coin(){
+
+    coin = this;
+    this.arrayOfDataTable = [];
+
+    this.load_data_btn  = $('#load_data_btn');
+    this.placeholder    = $('#orders_placeholder');
+    
+    this.pusher_02      = new Pusher('de504dc5763aeef9ff52');
+    this.ordersChannel  = this.pusher_02.subscribe('live_orders');
+
+    Pusher.host         = 'slanger1.chain.so'; // our server
+    Pusher.ws_port      = 443; // our server's port
+    Pusher.wss_port     = 443; // ...
+    
+    // create the pusher client connection
+    
+    // subscribe to the channel for BTC/USD updates
+    this.pusher_01      = new Pusher('e9f5cc20074501ca7395', { encrypted: true, disabledTransports: ['sockjs'], disableStats: true });
+    
+    this.ticker_btc         = this.pusher_01.subscribe('ticker_btc_usd');
+    this.ticker_update_btc  = this.pusher_01.subscribe('blockchain_update_btc');
+    this.ticker_ltc         = this.pusher_01.subscribe('ticker_ltc_usd');
+    this.ticker_dash        = this.pusher_01.subscribe('ticker_dash_usd');
+    this.ticker_zcash       = this.pusher_01.subscribe('ticker_zec_usd');
+    this.ticker_dogecoin    = this.pusher_01.subscribe('ticker_dogecoin_usd');
+
+    $('.mdb-select').material_select();
+
+    this.setEventListener();
+
+    this.loadAllCrypto();
+    this.listHistoricalData();
+
+
+}
+
+Coin.prototype.setEventListener = function(){
+
+    coin = this;
+    coin.ticker_btc.bind('price_update', function(data) {
+        // show price updates
+        if (data.type == "price" && data.value.exchange=="bitstamp") {
+          $('span#csprice').replaceWith('<span id="csprice">$' + data.value.price + ' ' + data.value.price_base+'</span>')
+          $('#time_updated_btc').html('Last Time updated: ' + data.value.time );
+          $('#sym_btc_cur').html(data.value.symbol );         
+        }
+    });
+    
+    coin.ticker_update_btc.bind('tx_update', function(data) {
+        if (data.type == "tx") {
+            // update an HTML div or span with the new content, for e.g.: data.value.blockhash
+            $('#btc_updates').html('total inputs:' + data.value.total_inputs + ' sent value:' + data.value.sent_value);
+           
+        }
+    });    
+    
+    coin.ticker_ltc.bind('price_update', function(data) {
+      // show price updates
+      if (data.type == "price" && data.value.exchange=="bitstamp") {
+        $('span#csprice_ltc').replaceWith('<span id="csprice_ltc">$' + data.value.price + ' LTC/'+data.value.price_base+'</span>')
+      }
+    });
+
+    coin.ticker_dash.bind('price_update', function(data) {
+      // show price updates
+      if (data.type == "price" && data.value.exchange=="bitfinex") {
+        $('span#csprice_dash').replaceWith('<span id="csprice_dash">$' + data.value.price + ' DASH/'+data.value.price_base+'</span>')
+      }
+    });
+
+    coin.ticker_zcash.bind('price_update', function(data) {
+      // show price updates
+      if (data.type == "price" && data.value.exchange=="bitfinex") {
+        $('span#csprice_zcash').replaceWith('<span id="csprice_zcash">$' + data.value.price + ' ZEC/'+data.value.price_base+'</span>')
+      }
+    });
+
+    coin.ticker_dogecoin.bind('price_update', function(data) {
+      // show price updates
+      if (data.type == "price" && data.value.exchange=="bitstamp") {
+        $('span#csprice_dogecoin').replaceWith('<span id="csprice_dogecoin">$' + data.value.price + ' DOGE/'+data.value.price_base+'</span>')
+      }
+    });
+
+    coin.load_data_btn.off('click').on('click', () => {
+       
+        coin.loadAllCrypto();
+
+    });
+
+}
+
+Coin.prototype.getOrders = function(){
+
+    $.each(['order_created', 'order_changed', 'order_deleted'], function (eventIndex, eventName) {
+        coin.ordersChannel.bind(eventName, function (data) {
+            if ($('ol li').length > 30) {
+                coin.placeholder.find('li:first').remove();
+            }
+            coin.placeholder.append('<li>[' + eventName + '] (' + data.datetime + ') ' + data.id + ': ' + data.amount + ' BTC @ ' + data.price + ' USD ' + ((data.order_type == 0) ? 'BUY' : 'SELL') + '</li>');
+        });
+    });
+
+}
+
+Coin.prototype.loadAllCrypto = async function(){
+    coin = this;
+    await coin.listAllCryptocurrencies();
+    coin.renderDataTable();
+}
+
+Coin.prototype.listAllCryptocurrenciesasync = async function(){
+    $.ajax({
+        type: "get",
+        url: "http://localhost/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=listAllCryptocurrencies",
+       
+        beforeSend: function (xhr) {
+          
+        },
+        async: false
+    }).done(function (response) {
+       
+        coin.arrayOfDataTable = JSON.parse(response);
+        
+    }).fail(function (xhr) {
+        console.log(xhr);
+   
+    });
+}
+
+Coin.prototype.renderDataTable = async function(){
+    $('#example').DataTable( {
+        data: arrayOfDataTable.data,
+        destroy: true,
+        searching: true,
+        lengthChange: false,
+        autoWidth: true,
+        paging: true,
+        pageLength: 10,
+        deferRender: true,
+        processing: true,
+        responsive: true,
+        order: ([2, 'price']),
+        columns: [
+            { data: 'name' },
+            { data: 'symbol' },
+            { data: 'price', 
+                render: function ( data, type, row ) {
+                    if ( row ) {
+                        var price = row.quote.USD.price;
+                        return price;
+                    }
+                    return "";
+                } 
+            },
+            { data: 'market_cap', 
+                render: function ( data, type, row ) {
+                    if ( row ) {
+                        var market_cap = row.quote.USD.market_cap;
+                        return market_cap;
+                    }
+                    return "";
+                }  
+            }
+        ]
+    } );
+}
+
+Coin.prototype.listHistoricalData = async function(){
+    $.ajax({
+        type: "get",
+        url: "http://localhost/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=listHistoricalData",
+       
+        beforeSend: function (xhr) {
+          
+        },
+        async: false
+    }).done(function (response) {
+       
+        let arrayOflistHistoricalData = JSON.parse(response);
+        let arrayOfHistoricalPrice = [];
+        arrayOflistHistoricalData.forEach(element => {
+            let elem = JSON.parse(element);
+            arrayOfHistoricalPrice.push(elem.rates.BTC);
+
+        });
+
+        //console.log(arrayOfHistoricalPrice);
+
+        //Main chart
+        var ctxL = document.getElementById("lineChart").getContext('2d');
+        var myLineChart = new Chart(ctxL, {
+            type: 'line',
+            data: {
+                labels: ["January", "February", "March", "April", "May", "June", "July","August","September"],
+                datasets: [{
+                    label: "BTC Price for 2018",
+                    fillColor: "#fff",
+                    backgroundColor: 'rgba(255, 255, 255, .3)',
+                    borderColor: 'rgba(255, 99, 132)',
+                    data: arrayOfHistoricalPrice,
+                }]
+            },
+            options: {
+                legend: {
+                    labels: {
+                        fontColor: "#fff",
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                        gridLines: {
+                            display: true,
+                            color: "rgba(255,255,255,.25)"
+                        },
+                        ticks: {
+                            fontColor: "#fff",
+                        },
+                    }],
+                    yAxes: [{
+                        display: true,
+                        gridLines: {
+                            display: true,
+                            color: "rgba(255,255,255,.25)"
+                        },
+                        ticks: {
+                            fontColor: "#fff",
+                        },
+                    }],
+                }
+            }
+        });
+        
+    }).fail(function (xhr) {
+        console.log(xhr);
+   
+    });
+
+
+}*/
+
+
 $(document).ready(function () {
+
 
     let arrayOfDataTable = [];
 
@@ -7,15 +251,7 @@ $(document).ready(function () {
 
     $('.mdb-select').material_select();
 
-    // Small chart
-    /*$(function () {
-        $('.min-chart#chart-sales').easyPieChart({
-            barColor: "#FF5252",
-            onStep: function (from, to, percent) {
-                $(this.el).find('.percent').text(Math.round(percent));
-            }
-        });
-    });*/
+    
 
     $(function () {
         var placeholder = $('#orders_placeholder'),

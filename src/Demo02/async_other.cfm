@@ -28,12 +28,12 @@
 	writeoutput("<br>");
 	writeOutput("pdfManager_future.isDone? #pdfManager_future.isDone()#");
 	writeoutput("<br>");
-	/*
+	
 	sleep(2000);
 	pdfManager_future.cancel();
 	writeOutput("pdfManager_future.isCancelled? #pdfManager_future.isCancelled()#");
 	writeoutput("<br>");
-	*/
+	
 	writeOutput("crawler_future.isDone? #crawler_future.isDone()#");
 	writeoutput("<br>");
 	writeOutput("<br>");
@@ -43,11 +43,11 @@
 	writeOutput(end_time-start_time);
 	writeOutput("<br>");
 	
-	/*
+	
 	sleep(7100);
 	writeOutput("helper_future.isDone? #helper_future.isDone()#");
 	writeoutput("<br>");
-	*/
+	
 	
 	function onError(e){
 		return e.message;
