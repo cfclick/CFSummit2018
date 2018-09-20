@@ -13,6 +13,7 @@ component  output="false"
 	
 	remote any function listHistoricalData(string theYear='2018') returnformat="JSON"   {
 		
+		writelog(theYear);
 		var dataDirectoryAndFile = getDirectoryFromPath( getCurrentTemplatePath() ) & "\#theYear#_listAllCryptocurrencies.json";
 		
 		if( cacheIdExists("#theYear#_listAllCryptocurrencies") )
@@ -23,6 +24,7 @@ component  output="false"
 		else if( fileExists( dataDirectoryAndFile ) )
 		{
 			writelog("JSON File: #theYear#_listAllCryptocurrencies.json used");
+			
 			return readFromJSONFile(dataDirectoryAndFile);
 		}
 		else

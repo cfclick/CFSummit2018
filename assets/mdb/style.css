@@ -15,10 +15,10 @@ html,body{
     linear-gradient(
       rgba(62, 69, 81, 0.7), 
       rgba(62, 69, 81, 0.7)
-    ),
-    url('../../images/hand4.jpg?v=1') no-repeat center center scroll;
+    )
+    /*url('../../images/hand4.jpg?v=1') no-repeat center center scroll;
     background-size: 100% auto;
-    background-attachment: fixed;
+    background-attachment: fixed;*/
 
 }
 
