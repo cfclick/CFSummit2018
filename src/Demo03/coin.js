@@ -57,6 +57,40 @@ Coin.prototype.setEventListener = function(){
           $('#sym_btc_cur').html(data.value.symbol );         
         }
     });
+
+    
+    coin.ticker_ltc.bind('price_update', function(data) {
+        // show price updates
+        if (data.type == "price" && data.value.exchange=="bitstamp") {
+          $('#time_updated_ltc').html('Last Time updated: ' + data.value.time );
+          $('span#csprice_ltc').replaceWith('<span id="csprice_ltc">$' + data.value.price + ' ' +  data.value.price_base+'</span>')
+        }
+      });
+  
+      coin.ticker_dash.bind('price_update', function(data) {
+        // show price updates
+        if (data.type == "price" && data.value.exchange=="bitfinex") {
+            $('#time_updated_dash').html('Last Time updated: ' + data.value.time );
+          $('span#csprice_dash').replaceWith('<span id="csprice_dash">$' + data.value.price + ' ' +  data.value.price_base+'</span>')
+        }
+      });
+  
+      coin.ticker_zcash.bind('price_update', function(data) {
+        // show price updates
+        if (data.type == "price" && data.value.exchange=="bitfinex") {
+            $('#time_updated_zec').html('Last Time updated: ' + data.value.time );
+          $('span#csprice_zcash').replaceWith('<span id="csprice_zcash">$' + data.value.price + ' ' +  data.value.price_base+'</span>')
+        }
+      });
+  
+      coin.ticker_dogecoin.bind('price_update', function(data) {
+        // show price updates
+        if (data.type == "price" && data.value.exchange=="bitstamp") {
+            $('#time_updated_doge').html('Last Time updated: ' + data.value.time );
+          $('span#csprice_dogecoin').replaceWith('<span id="csprice_dogecoin">$' + data.value.price + ' ' +  data.value.price_base +'</span>')
+        }
+      });
+  
     
     coin.ticker_update_btc.bind('tx_update', function(data) {
         if (data.type == "tx") {
@@ -90,34 +124,7 @@ Coin.prototype.setEventListener = function(){
         }
     });
     
-    coin.ticker_ltc.bind('price_update', function(data) {
-      // show price updates
-      if (data.type == "price" && data.value.exchange=="bitstamp") {
-        $('span#csprice_ltc').replaceWith('<span id="csprice_ltc">$' + data.value.price + data.value.price_base+'</span>')
-      }
-    });
-
-    coin.ticker_dash.bind('price_update', function(data) {
-      // show price updates
-      if (data.type == "price" && data.value.exchange=="bitfinex") {
-        $('span#csprice_dash').replaceWith('<span id="csprice_dash">$' + data.value.price + data.value.price_base+'</span>')
-      }
-    });
-
-    coin.ticker_zcash.bind('price_update', function(data) {
-      // show price updates
-      if (data.type == "price" && data.value.exchange=="bitfinex") {
-        $('span#csprice_zcash').replaceWith('<span id="csprice_zcash">$' + data.value.price + data.value.price_base+'</span>')
-      }
-    });
-
-    coin.ticker_dogecoin.bind('price_update', function(data) {
-      // show price updates
-      if (data.type == "price" && data.value.exchange=="bitstamp") {
-        $('span#csprice_dogecoin').replaceWith('<span id="csprice_dogecoin">$' + data.value.price + data.value.price_base+'</span>')
-      }
-    });
-
+    
     coin.load_data_btn.off('click').on('click', () => {
        
         (async (f1) => {
