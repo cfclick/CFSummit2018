@@ -3,12 +3,14 @@ function Coin(){
     coin = this;
     this.arrayOfDataTable = [];
     this.arrayOfHistoricalPrice = [];
+    this.OtherExchPrice = {};
 
     this.load_data_btn          = $('#load_data_btn');
     this.placeholder            = $('#orders_placeholder');
-    this.news_sideModalTR       = $('#news_sideModalTR');
+    this.otherExch_sideModal       = $('#otherExch_sideModal');
     this.select_history_year    = $('#select_history_year');
     this.btn_price_exchanges    = $('#btn_price_exchanges');
+    this.myOtherExchTitle       = $('#myOtherExchTitle');
     
     this.pusher_02              = new Pusher('de504dc5763aeef9ff52');
     this.ordersChannel          = this.pusher_02.subscribe('live_orders');
@@ -140,16 +142,30 @@ Coin.prototype.setEventListener = function(){
         
     });
 
-    coin.btn_price_exchanges.off('click').on('click'), (event) => {
-   
-        coin.news_sideModalTR.modal('show');
-    }
+    coin.btn_price_exchanges.off('click').on('click', async (event) => {
+        await coin.getPriceFromExchages(); 
+    });
+
+    coin.otherExch_sideModal.on('shown.bs.modal', () => {
+        coin.myOtherExchTitle.html(coin.otherExchPrice.network);
+
+     
+        coin.otherExchPrice.prices.forEach( elem => {
+            $('#exchanges_list').append('<dt class="col-sm-3">Exchange</dt><dd class="col-sm-9"><h4>' + elem.exchange + '</h4></dd>' +
+                                        '<dt class="col-sm-3">Price</dt><dd class="col-sm-9 text-primary">' + elem.price + '</dd>' +
+                                        '<dt class="col-sm-3">Price Base</dt><dd class="col-sm-9">' + elem.price_base + '</dd>' +
+                                        '<dt class="col-sm-3">Time</dt><dd class="col-sm-9">' + elem.time + '</dd>' +
+                                        '<hr>' );
+        } )
+        
+               
+    })
 
 }
 
 Coin.prototype.loadHistoricalData = async (f2) => {
 
-        await f2.listHistoricalData().then( f2.renderChart() ); 
+    await f2.listHistoricalData().then( f2.renderChart() ); 
 }
 
 Coin.prototype.getOrders = function(){
@@ -316,20 +332,29 @@ Coin.prototype.renderChart = async function( historyList ){
 }
 
 
-Coin.prototype.getPriceFromExchages = () => {
+Coin.prototype.getPriceFromExchages = async () => {
 
     let curr = '';
     let ticker = '';
-    $.ajax({
-        type: "GET",
-        url: "https://chain.so/api/v2/get_price/BTC/USD",
-        dataType: "dataType",
-        success: function (response) {
-            console.log(response);
-        },
-        error: function (xhr,msg,err){
+    
 
-        }
+    $.ajax({
+        type: "get",
+        url: "https://chain.so/api/v2/get_price/BTC/USD",
+       
+        beforeSend: function (xhr) {
+          
+        },
+        async: false
+    }).done(function (response) {
+       console.log(response);
+      
+       coin.otherExchPrice = response.data;
+       coin.otherExch_sideModal.modal('show');
+        
+    }).fail(function (xhr) {
+        console.log(xhr);
+   
     });
 
 }
