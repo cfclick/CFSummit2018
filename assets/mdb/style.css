@@ -22,5 +22,5 @@ html,body{
 
 }
 
-#orders_placeholder {width:220px;margin:0 auto;}
+#orders_placeholder {width:300px;margin:0 auto;}
 #orders_placeholder > li {list-style:none;}

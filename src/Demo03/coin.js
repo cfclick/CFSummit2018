@@ -1,23 +1,32 @@
 function Coin(){
     //coin = constructor();
     coin = this;
-    this.arrayOfDataTable = [];
-    this.arrayOfHistoricalPrice = [];
-    this.OtherExchPrice = {};
+    this.arrayOfDataTable           = [];
+    this.arrayOfHistoricalPrice     = [];
+    this.OtherExchPrice             = {};
+    this.totalBTCSold               = 0;
+    this.totalBTCBuy                = 0;
+    this.totalBTCDiff               = 0;
 
-    this.load_data_btn          = $('#load_data_btn');
-    this.placeholder            = $('#orders_placeholder');
-    this.otherExch_sideModal       = $('#otherExch_sideModal');
-    this.select_history_year    = $('#select_history_year');
-    this.btn_price_exchanges    = $('#btn_price_exchanges');
-    this.myOtherExchTitle       = $('#myOtherExchTitle');
+    this.load_data_btn              = $('#load_data_btn');
+    this.placeholder                = $('#orders_placeholder');
+    this.otherExch_sideModal        = $('#otherExch_sideModal');
+    this.select_history_year        = $('#select_history_year');
+    this.btn_price_exchanges        = $('#btn_price_exchanges');
+    this.myOtherExchTitle           = $('#myOtherExchTitle');
+    this.btn_price_exchanges_dash   = $('#btn_price_exchanges_dash');
+    this.btn_price_exchanges_zec    = $('#btn_price_exchanges_zec');
+    this.btn_price_exchanges_ltc    = $('#btn_price_exchanges_ltc');
+    this.btc_sales                  = $('#btc_sales');
+    this.btc_buy                    = $('#btc_buy');
+    this.btc_diff                   = $('#btc_diff');
     
-    this.pusher_02              = new Pusher('de504dc5763aeef9ff52');
-    this.ordersChannel          = this.pusher_02.subscribe('live_orders');
+    this.pusher_02                  = new Pusher('de504dc5763aeef9ff52');
+    this.ordersChannel              = this.pusher_02.subscribe('live_orders');
 
-    Pusher.host                 = 'slanger1.chain.so'; // our server
-    Pusher.ws_port              = 443; // our server's port
-    Pusher.wss_port             = 443; // ...
+    Pusher.host                     = 'slanger1.chain.so'; // our server
+    Pusher.ws_port                  = 443; // our server's port
+    Pusher.wss_port                 = 443; // ...
     
     // create the pusher client connection
     
@@ -56,7 +65,7 @@ Coin.prototype.setEventListener = function(){
         // show price updates
         if (data.type == "price" && data.value.exchange=="bitstamp") {
           $('span#csprice').replaceWith('<span id="csprice">$' + data.value.price + ' ' + data.value.price_base+'</span>')
-          $('#time_updated_btc').html('Last Time updated: ' + data.value.time );
+          $('#time_updated_btc').html('Last Time updated: ' + coin.unix_timestampToDateTime(data.value.time) );
           $('#sym_btc_cur').html(data.value.symbol );         
         }
     });
@@ -65,7 +74,7 @@ Coin.prototype.setEventListener = function(){
     coin.ticker_ltc.bind('price_update', function(data) {
         // show price updates
         if (data.type == "price" && data.value.exchange=="bitstamp") {
-          $('#time_updated_ltc').html('Last Time updated: ' + data.value.time );
+          $('#time_updated_ltc').html('Last Time updated: ' + coin.unix_timestampToDateTime( data.value.time ) );
           $('span#csprice_ltc').replaceWith('<span id="csprice_ltc">$' + data.value.price + ' ' +  data.value.price_base+'</span>')
         }
       });
@@ -73,7 +82,7 @@ Coin.prototype.setEventListener = function(){
       coin.ticker_dash.bind('price_update', function(data) {
         // show price updates
         if (data.type == "price" && data.value.exchange=="bitfinex") {
-            $('#time_updated_dash').html('Last Time updated: ' + data.value.time );
+            $('#time_updated_dash').html('Last Time updated: ' + coin.unix_timestampToDateTime( data.value.time ) );
           $('span#csprice_dash').replaceWith('<span id="csprice_dash">$' + data.value.price + ' ' +  data.value.price_base+'</span>')
         }
       });
@@ -81,7 +90,7 @@ Coin.prototype.setEventListener = function(){
       coin.ticker_zcash.bind('price_update', function(data) {
         // show price updates
         if (data.type == "price" && data.value.exchange=="bitfinex") {
-            $('#time_updated_zec').html('Last Time updated: ' + data.value.time );
+            $('#time_updated_zec').html('Last Time updated: ' + coin.unix_timestampToDateTime( data.value.time ) );
           $('span#csprice_zcash').replaceWith('<span id="csprice_zcash">$' + data.value.price + ' ' +  data.value.price_base+'</span>')
         }
       });
@@ -89,7 +98,7 @@ Coin.prototype.setEventListener = function(){
       coin.ticker_dogecoin.bind('price_update', function(data) {
         // show price updates
         if (data.type == "price" && data.value.exchange=="bitstamp") {
-            $('#time_updated_doge').html('Last Time updated: ' + data.value.time );
+            $('#time_updated_doge').html('Last Time updated: ' + coin.unix_timestampToDateTime( data.value.time ) );
           $('span#csprice_dogecoin').replaceWith('<span id="csprice_dogecoin">$' + data.value.price + ' ' +  data.value.price_base +'</span>')
         }
       });
@@ -143,23 +152,36 @@ Coin.prototype.setEventListener = function(){
     });
 
     coin.btn_price_exchanges.off('click').on('click', async (event) => {
-        await coin.getPriceFromExchages(); 
+        await coin.getPriceFromExchages('BTC'); 
+    });
+
+    coin.btn_price_exchanges_zec.off('click').on('click', async (event) => {
+        await coin.getPriceFromExchages('ZEC'); 
+    });
+
+    coin.btn_price_exchanges_dash.off('click').on('click', async (event) => {
+        await coin.getPriceFromExchages('DASH'); 
+    });
+
+    coin.btn_price_exchanges_ltc.off('click').on('click', async (event) => {
+        await coin.getPriceFromExchages('LTC'); 
     });
 
     coin.otherExch_sideModal.on('shown.bs.modal', () => {
         coin.myOtherExchTitle.html(coin.otherExchPrice.network);
-
-     
         coin.otherExchPrice.prices.forEach( elem => {
-            $('#exchanges_list').append('<dt class="col-sm-3">Exchange</dt><dd class="col-sm-9"><h4>' + elem.exchange + '</h4></dd>' +
-                                        '<dt class="col-sm-3">Price</dt><dd class="col-sm-9 text-primary">' + elem.price + '</dd>' +
-                                        '<dt class="col-sm-3">Price Base</dt><dd class="col-sm-9">' + elem.price_base + '</dd>' +
-                                        '<dt class="col-sm-3">Time</dt><dd class="col-sm-9">' + elem.time + '</dd>' +
-                                        '<hr>' );
-        } )
-        
-               
-    })
+             $('#exchanges_list').append('<a href="#" class="list-group-item list-group-item-action flex-column align-items-start">' +
+                                '<div class="d-flex w-100 justify-content-between">' + 
+                                '<h5 class="mb-1">' + elem.exchange + '</h5><small>' + coin.unix_timestampToDateTime(elem.time) + '</small></div>' + 
+                                '<p class="mb-1 text-primary">$' + elem.price + '</p><small>' + elem.price_base + '</small></a>' );                                                     
+        } )        
+    });
+
+    coin.otherExch_sideModal.on('hide.bs.modal', () => {
+        coin.myOtherExchTitle.html("");
+        coin.otherExchPrice.prices = [];
+        $('#exchanges_list').html("");
+    });
 
 }
 
@@ -175,7 +197,27 @@ Coin.prototype.getOrders = function(){
             if ($('ol li').length > 30) {
                 coin.placeholder.find('li:first').remove();
             }
-            coin.placeholder.append('<li>[' + eventName + '] (' + data.datetime + ') ' + data.id + ': ' + data.amount + ' BTC @ ' + data.price + ' USD ' + ((data.order_type == 0) ? 'BUY' : 'SELL') + '</li>');
+
+            let cl = "success-color";
+            if( data.order_type != 0)
+            {
+                coin.totalBTCSold += data.amount;
+                coin.btc_sales.html( coin.totalBTCSold );
+                cl = "danger-color";
+            }
+            else
+            {
+                coin.totalBTCBuy += data.amount;
+                coin.btc_buy.html( coin.totalBTCBuy );
+            }
+
+            coin.totalBTCDiff = coin.totalBTCBuy - coin.totalBTCSold;
+            coin.btc_diff.html( coin.totalBTCDiff );
+            coin.placeholder.append('<li class="text-small ' + cl + '">[' + eventName + '] (' + coin.unix_timestampToDateTime(data.datetime) + ') ' + data.id + ': ' + data.amount + ' BTC @ ' + data.price + ' USD ' + ((data.order_type == 0) ? 'BUY' : 'SELL') + '</li>');
+            
+            
+
+            
         });
     });
 
@@ -332,15 +374,11 @@ Coin.prototype.renderChart = async function( historyList ){
 }
 
 
-Coin.prototype.getPriceFromExchages = async () => {
-
-    let curr = '';
-    let ticker = '';
-    
+Coin.prototype.getPriceFromExchages = async (ticker) => {
 
     $.ajax({
         type: "get",
-        url: "https://chain.so/api/v2/get_price/BTC/USD",
+        url: "https://chain.so/api/v2/get_price/" + ticker + "/USD",
        
         beforeSend: function (xhr) {
           
@@ -357,5 +395,22 @@ Coin.prototype.getPriceFromExchages = async () => {
    
     });
 
+}
+
+Coin.prototype.unix_timestampToDateTime = ( unix_timestamp )  =>  {
+    let date = new Date(unix_timestamp*1000);
+    let mydate = date.toLocaleString();
+    // Hours part from the timestamp
+   /* let hours = date.getHours();
+    // Minutes part from the timestamp
+    let minutes = "0" + date.getMinutes();
+    // Seconds part from the timestamp
+    let seconds = "0" + date.getSeconds();
+
+    // Will display time in 10:30:23 format
+    let formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+    let fulldatetime = mydate + ' ' + formattedTime;*/
+
+    return mydate;
 }
 //https://chain.so/api/v2/get_price/BTC/USD
