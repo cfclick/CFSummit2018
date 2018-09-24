@@ -3,6 +3,7 @@ function Coin(){
     coin = this;
     this.arrayOfDataTable           = [];
     this.arrayOfHistoricalPrice     = [];
+    this.arrayOfHistoricalPrice2     = [];
     this.OtherExchPrice             = {};
     this.totalBTCSold               = 0;
     this.totalBTCBuy                = 0;
@@ -257,6 +258,13 @@ Coin.prototype.listAllCryptocurrenciesasync = async function(){
 }
 
 Coin.prototype.renderDataTable = async function(){
+
+    const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2
+      })
+      
     $('#example').DataTable( {
         data: coin.arrayOfDataTable.data,
         destroy: true,
@@ -268,7 +276,7 @@ Coin.prototype.renderDataTable = async function(){
         deferRender: true,
         processing: true,
         responsive: true,
-        order: ([2, 'price']),
+        order: ([4, 'asc']),
         columns: [
             { data: 'name' },
             { data: 'symbol' },
@@ -276,7 +284,7 @@ Coin.prototype.renderDataTable = async function(){
                 render: function ( data, type, row ) {
                     if ( row ) {
                         var price = row.quote.USD.price;
-                        return price;
+                        return formatter.format(price);
                     }
                     return "";
                 } 
@@ -285,7 +293,7 @@ Coin.prototype.renderDataTable = async function(){
                 render: function ( data, type, row ) {
                     if ( row ) {
                         var market_cap = row.quote.USD.market_cap;
-                        return market_cap;
+                        return formatter.format(market_cap);
                     }
                     return "";
                 }  
@@ -297,7 +305,10 @@ Coin.prototype.renderDataTable = async function(){
                 render: function ( data, type, row ) {
                     if ( row ) {
                         var percent_change_1h = row.quote.USD.percent_change_1h;
-                        return percent_change_1h;
+                        if( percent_change_1h > 0 )
+                            return '<i class="fa fa-arrow-circle-up text-success"></i> ' + percent_change_1h;
+                        else
+                            return '<i class="fa fa-arrow-circle-down text-danger"></i> ' + percent_change_1h;
                     }
                     return "";
                 }
@@ -306,7 +317,10 @@ Coin.prototype.renderDataTable = async function(){
                 render: function ( data, type, row ) {
                     if ( row ) {
                         var percent_change_24h = row.quote.USD.percent_change_24h;
-                        return percent_change_24h;
+                        if( percent_change_24h > 0 )
+                            return '<i class="fa fa-arrow-circle-up text-success"></i> ' + percent_change_24h;
+                        else
+                            return '<i class="fa fa-arrow-circle-down text-danger"></i> ' + percent_change_24h;
                     }
                     return "";
                 }  
@@ -315,7 +329,10 @@ Coin.prototype.renderDataTable = async function(){
                 render: function ( data, type, row ) {
                     if ( row ) {
                         var percent_change_7d = row.quote.USD.percent_change_7d;
-                        return percent_change_7d;
+                        if( percent_change_7d > 0 )
+                            return '<i class="fa fa-arrow-circle-up text-success"></i> ' + percent_change_7d;
+                        else
+                            return '<i class="fa fa-arrow-circle-down text-danger"></i> ' + percent_change_7d;
                     }
                     return "";
                 }  
@@ -330,7 +347,8 @@ Coin.prototype.listHistoricalData = async function(){
     if(history_year == null){
         history_year = 2018;
     }
-    console.log(history_year);
+    let previous_year = history_year - 1;
+
     $.ajax({
         type: "get",
         url: "http://localhost/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=listHistoricalData&theYear=" + history_year,
@@ -363,6 +381,38 @@ Coin.prototype.listHistoricalData = async function(){
     });
 
 
+    $.ajax({
+        type: "get",
+        url: "http://localhost/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=listHistoricalData&theYear=" + previous_year,
+       
+        beforeSend: function (xhr) {
+          
+        },
+        async: false
+    }).done(function (response) {
+        coin.arrayOfHistoricalPrice2 = [];
+        let arrayOflistHistoricalData = JSON.parse(response);
+        
+        arrayOflistHistoricalData.forEach(element => {
+            let elem = JSON.parse(element);
+           // console.log(elem.rates);
+           if( elem.success){
+                if( typeof elem.rates != 'undefined'  )         
+                    coin.arrayOfHistoricalPrice2.push(elem.rates.BTC);
+           }else{
+               console.log(elem.error.info);
+           }
+            
+
+            return coin.arrayOfHistoricalPrice2;
+        });
+        
+    }).fail(function (xhr) {
+        console.log(xhr);
+   
+    });
+
+
 }
 
 Coin.prototype.renderChart = async function( historyList ){
@@ -372,6 +422,8 @@ Coin.prototype.renderChart = async function( historyList ){
     if(history_year == null){
         history_year = 2018;
     }
+
+    let previous_year = history_year - 1;
       let ctxL = document.getElementById("lineChart").getContext('2d');
       let myLineChart = new Chart(ctxL, {
           type: 'line',
@@ -379,11 +431,57 @@ Coin.prototype.renderChart = async function( historyList ){
               labels: ["January", "February", "March", "April", "May", "June", "July","August","September","October","November","December"],
               datasets: [{
                   label: "BTC Price for " + history_year,
-                  fillColor: "#fff",
-                  backgroundColor: 'rgba(255, 255, 255, .3)',
-                  borderColor: 'rgba(255, 99, 132)',
+                  fillColor: "rgba(220,220,220,0.2)",
+                  strokeColor: "rgba(220,220,220,1)",
+                  pointColor: "rgba(220,220,220,1)",
+                  pointStrokeColor: "#fff",
+                  pointHighlightFill: "#fff",
+                  pointHighlightStroke: "rgba(220,220,220,1)",
+                  backgroundColor: [
+                      'rgba(255, 255, 255, 0.2)',
+                      'rgba(255, 255, 255, 0.2)',
+                      'rgba(255, 255, 255, 0.2)',
+                      'rgba(255, 255, 255, 0.2)',
+                      'rgba(255, 255, 255, 0.2)',
+                      'rgba(255, 255, 255, 0.2)'
+                  ],
+                  borderColor: [
+                      'rgba(255, 255, 255, 1)',
+                      'rgba(255, 255, 255, 1)',
+                      'rgba(255, 255, 255, 1)',
+                      'rgba(255, 255, 255, 1)',
+                      'rgba(255, 255, 255, 1)',
+                      'rgba(255, 255, 255, 1)'
+                  ],
+                  borderWidth: 1,
                   data: coin.arrayOfHistoricalPrice,
-              }]
+              },{
+                label: "BTC Price for " + previous_year,
+                fillColor: "rgba(151,187,205,0.2)",
+                            strokeColor: "rgba(151,187,205,1)",
+                            pointColor: "rgba(151,187,205,1)",
+                            pointStrokeColor: "#fff",
+                            pointHighlightFill: "#fff",
+                            pointHighlightStroke: "rgba(151,187,205,1)",
+                            backgroundColor: [
+                                'rgba(255, 255, 255, 0.2)',
+                                'rgba(255, 255, 255, 0.2)',
+                                'rgba(255, 255, 255, 0.2)',
+                                'rgba(255, 255, 255, 0.2)',
+                                'rgba(255, 255, 255, 0.2)',
+                                'rgba(255, 255, 255, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 255, 255, 1)',
+                                'rgba(255, 255, 255, 1)',
+                                'rgba(255, 255, 255, 1)',
+                                'rgba(255, 255, 255, 1)',
+                                'rgba(255, 255, 255, 1)',
+                                'rgba(255, 255, 255, 1)'
+                            ],
+                            borderWidth: 1,
+                data: coin.arrayOfHistoricalPrice2,
+            }]
           },
           options: {
               legend: {
@@ -468,7 +566,7 @@ Coin.prototype.getPriceFromExchages = async (ticker) => {
         },
         async: false
     }).done(function (response) {
-       console.log(response);
+      // console.log(response);
       
        coin.otherExchPrice = response.data;
        coin.otherExch_sideModal.modal('show');
