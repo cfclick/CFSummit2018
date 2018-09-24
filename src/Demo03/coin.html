@@ -282,7 +282,12 @@
                                                 <th >Symbol</th>
                                                 <th >Price</th>
                                                 <th >Market Cap</th>
-                                               
+                                                <th>Rank</th>
+                                                <th>date_added</th>
+                                                <th>last_updated</th>
+                                                <th>percent_change_1h</th>
+                                                <th>percent_change_24h</th>
+                                                <th>percent_change_7d</th>
                                             </tr>
                                         </thead>           
                                     </table>
@@ -340,23 +345,13 @@
                         <!--Panel-->
                         <div class="card">
                             <div class="card-header white-text primary-color">
-                                Tasks to do
+                                Pie Chart
                             </div>
                             <!--/.Card-->
                             <div class="card-body pt-0 px-1">
 
                                 <!--Card content-->
-                                <div class="card-body text-center">
-
-                                    <div class="list-group list-panel">
-                                        <a href="#" class="list-group-item d-flex justify-content-between dark-grey-text">Cras justo odio <i class="fa fa-wrench ml-auto" data-toggle="tooltip" data-placement="top" title="Click to fix"></i></a>
-                                        <a href="#" class="list-group-item d-flex justify-content-between dark-grey-text">Dapibus ac facilisi<i class="fa fa-wrench ml-auto" data-toggle="tooltip" data-placement="top" title="Click to fix"></i></a>
-                                        <a href="#" class="list-group-item d-flex justify-content-between dark-grey-text">Morbi leo risus <i class="fa fa-wrench ml-auto" data-toggle="tooltip" data-placement="top" title="Click to fix"></i></a>
-                                        <a href="#" class="list-group-item d-flex justify-content-between dark-grey-text">Porta ac consectet<i class="fa fa-wrench ml-auto" data-toggle="tooltip" data-placement="top" title="Click to fix"></i></a>
-                                        <a href="#" class="list-group-item d-flex justify-content-between dark-grey-text">Vestibulum at eros <i class="fa fa-wrench ml-auto" data-toggle="tooltip" data-placement="top" title="Click to fix"></i></a>
-                                    </div>
-
-                                </div>
+                                <canvas id="doughnutChart"></canvas>
                                 <!--/.Card content-->
 
                             </div>
