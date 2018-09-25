@@ -13,7 +13,7 @@ $(document).ready(function(){
                 $('#sync_loader').html("<i class='fa fa-spinner fa-spin fa-3x'></i>");
                 $("#total_sync_duration").html("");
             },
-            async: false
+            async: true
         }).done(function (response) {
             $('#sync_loader').html("");
            result = JSON.parse(response);
@@ -157,7 +157,7 @@ $(document).ready(function(){
           
                 handleRepoList(user, repos)
             });
-         /*var myPromise = MakeQuerablePromise(users);
+         /*\\var myPromise = MakeQuerablePromise(users);
        
        if( myPromise.isFulfilled() ){
             const usersList = JSON.parse(users).items
