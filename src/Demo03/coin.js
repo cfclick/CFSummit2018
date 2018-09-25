@@ -203,6 +203,10 @@ Coin.prototype.setEventListener = function(){
         coin.streamModalLg.modal('show');
     });
 
+    coin.streamModalLg.on('shown.bs.modal', () => {
+        
+        cryptoCompare = new CryptoCompare();     
+    });
 }
 
 Coin.prototype.loadHistoricalData = async (f2) => {

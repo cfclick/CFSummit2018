@@ -553,7 +553,7 @@
 
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title w-100" id="myModalLabel">Modal title</h4>
+          <h4 class="modal-title w-100" id="myModalLabel">BTC-USD Market Trades</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -561,27 +561,27 @@
         <div class="modal-body">
                 <div class="container">
             <div class="row">
-                <div class="col-lg-8 col-lg-offset-2">
+                <div class="col-lg-12 col-lg-offset-2">
                     <div class="panel-group">
                         <div class="panel panel-primary">
-                            <div class="panel-heading text-center">
+                            <!--<div class="panel-heading text-center">
                                 <h4>BTC-USD Market Trades</h4>
-                            </div>
+                            </div>-->
                             <div class="panel-body">
                                 <h6><a id="source" class="text-right" href="https://www.cryptocompare.com/"><strong>Source:</strong> CryptoCompare</a></h6>
                                 <div class="row btn-row">
-                                    <div class="col-xs-4">
+                                    <!--<div class="col-xs-4">
                                         <h3 id="stream-text">Streaming...</h3>
-                                    </div>
+                                    </div>-->
                                     <div class="col-xs-2">
                                         <a class="btn btn-success btn-lg subon" id="subscribe">Subscribe</a>
                                     </div>
                                     <div class="col-xs-2">
                                         <a class="btn btn-danger btn-lg" id="unsubscribe">Unsubscribe</a>
                                     </div>
-                                    <div class="col-xs-12 text-center">
+                                   <!-- <div class="col-xs-12 text-center">
                                         <h6>Currently streaming from:</h6><i id="sub-exchanges"></i>
-                                    </div>
+                                    </div> -->
                                 </div>
                                 <table class="table">
                                     <thead>
@@ -634,10 +634,13 @@
         <script src="../../assets/mdb/mdb.js" ></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pusher/2.1.6/pusher.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.2/socket.io.js"></script>
+<script src="ccc-streamer-utilities.js"></script>
 
-
+<script src="streams.js"></script>
 <!-- Charts -->
 <script src="coin.js"></script>
+
 <!---->
 <script>
     $(document).ready(function(){
