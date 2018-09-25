@@ -215,7 +215,7 @@
                                         </div>
                                         <!--/First column-->
 
-                                       
+                                        <button id="btn_stream" class="btn btn-default">Get Real time data</button>
 
                                     </div>
                                     <!--/Panel data-->
@@ -542,6 +542,77 @@
     </div>
   </div>
   <!-- Side Modal Top Right -->
+
+
+  <!-- Central Modal Small -->
+<div class="modal fade" id="streamModalLg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+    <!-- Change class .modal-sm to change the size of the modal -->
+    <div class="modal-dialog modal-lg" role="document">
+
+
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title w-100" id="myModalLabel">Modal title</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+                <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2">
+                    <div class="panel-group">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading text-center">
+                                <h4>BTC-USD Market Trades</h4>
+                            </div>
+                            <div class="panel-body">
+                                <h6><a id="source" class="text-right" href="https://www.cryptocompare.com/"><strong>Source:</strong> CryptoCompare</a></h6>
+                                <div class="row btn-row">
+                                    <div class="col-xs-4">
+                                        <h3 id="stream-text">Streaming...</h3>
+                                    </div>
+                                    <div class="col-xs-2">
+                                        <a class="btn btn-success btn-lg subon" id="subscribe">Subscribe</a>
+                                    </div>
+                                    <div class="col-xs-2">
+                                        <a class="btn btn-danger btn-lg" id="unsubscribe">Unsubscribe</a>
+                                    </div>
+                                    <div class="col-xs-12 text-center">
+                                        <h6>Currently streaming from:</h6><i id="sub-exchanges"></i>
+                                    </div>
+                                </div>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Market</th>
+                                            <th>Type</th>
+                                            <th>ID</th>
+                                            <th>Price</th>
+                                            <th>Quantity</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="trades">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary btn-sm">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Central Modal Small -->
+
   </body>
 </html>
 

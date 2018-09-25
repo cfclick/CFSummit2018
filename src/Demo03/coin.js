@@ -16,6 +16,7 @@ function Coin(){
     this.load_data_btn              = $('#load_data_btn');
     this.placeholder                = $('#orders_placeholder');
     this.otherExch_sideModal        = $('#otherExch_sideModal');
+    this.streamModalLg              = $('#streamModalLg');
     this.select_history_year        = $('#select_history_year');
     this.btn_price_exchanges        = $('#btn_price_exchanges');
     this.myOtherExchTitle           = $('#myOtherExchTitle');
@@ -25,6 +26,7 @@ function Coin(){
     this.btc_sales                  = $('#btc_sales');
     this.btc_buy                    = $('#btc_buy');
     this.btc_diff                   = $('#btc_diff');
+    this.btn_stream                 = $('#btn_stream');
     
     this.pusher_02                  = new Pusher('de504dc5763aeef9ff52');
     this.ordersChannel              = this.pusher_02.subscribe('live_orders');
@@ -195,6 +197,10 @@ Coin.prototype.setEventListener = function(){
         coin.myOtherExchTitle.html("");
         coin.otherExchPrice.prices = [];
         $('#exchanges_list').html("");
+    });
+
+    coin.btn_stream.off('click').on('click', async (event) => {
+        coin.streamModalLg.modal('show');
     });
 
 }
