@@ -37,10 +37,10 @@
 								</p>
 								<a href="#" id="sync_btn" class="btn btn-primary">Normal (sync)</a>
 								<br><br>
+								<span id="sync_loader"></span>
 								<div class="list-group" id="sync_result_div">
 									
-									
-								  </div>
+								</div>
 								<!--<ul id="sync_result_div" style="padding-top:15px" >
 								</ul>-->
 								
@@ -65,7 +65,7 @@
 								<br><br>
 								<div class="list-group" id="async_result_div">
 									
-								  </div>
+								</div>
 								<!--<ul id="async_result_div">
 									
 								</ul>-->

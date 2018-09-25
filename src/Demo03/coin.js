@@ -600,4 +600,3 @@ Coin.prototype.unix_timestampToDateTime = ( unix_timestamp )  =>  {
 
     return mydate;
 }
-//https://chain.so/api/v2/get_price/BTC/USD
