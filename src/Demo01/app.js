@@ -4,17 +4,18 @@ $(document).ready(function(){
 
     $('#sync_btn').off('click').on('click', function(target){
 
+        $('#sync_result_div').html("");
         $.ajax({
             type: "get",
             url: "http://localhost/CFSummit2018/src/cfcs/UrlHelper.cfc?method=startWebSiteDownloadSync",
             
             beforeSend: function (xhr) {
-                $('#sync_result_div').html("<i class='fa fa-spinner fa-spin fa-3x fa-fw'></i>");
+                $('#sync_loader').html("<i class='fa fa-spinner fa-spin fa-3x'></i>");
                 $("#total_sync_duration").html("");
             },
             async: false
         }).done(function (response) {
-           
+            $('#sync_loader').html("");
            result = JSON.parse(response);
             if( result ){
                 totalDueration = 0;
@@ -32,9 +33,10 @@ $(document).ready(function(){
                     $('#sync_result_div').html(str);
                 });
             }
-            console.log(response);
+           // console.log(response);
             
         }).fail(function (xhr) {
+            $('#sync_loader').html("Error");
             console.log(xhr);
             $('#sync_result_div').html("Sorry error check console log");
             $("#total_sync_duration").html("");
@@ -42,7 +44,7 @@ $(document).ready(function(){
 
     });
 
-    $('#async_btn').off('click').on('click', function(target){
+    $('#async_btn').off('click').on('click', async function(target){
         $.ajax({
             type: "get",
             url: "http://localhost/CFSummit2018/src/cfcs/UrlHelper.cfc?method=startWebSiteDownloadASync",
@@ -51,7 +53,7 @@ $(document).ready(function(){
                 $('#async_result_div').html("<i class='fa fa-spinner fa-spin fa-3x fa-fw'></i>");
                 $("#total_async_duration").html("");
             },
-            async: false
+            async: true
         }).done(function (response) {
             result = JSON.parse(response);
             if( result ){
@@ -74,7 +76,7 @@ $(document).ready(function(){
                 });
             }
             
-            console.log(response);
+            //console.log(response);
 
         }).fail(function (xhr, type, statusText) {
             console.log(xhr);
@@ -84,7 +86,7 @@ $(document).ready(function(){
         
     });
 
-    $('#async_await_btn').off('click').on('click', function(target){
+    $('#async_await_btn').off('click').on('click', async function(target){
         $.ajax({
             type: "get",
             url: "http://localhost/CFSummit2018/src/cfcs/UrlHelper.cfc?method=startWebSiteDownloadASyncAwait",
@@ -116,7 +118,7 @@ $(document).ready(function(){
                 });
             }
             
-            console.log(response);
+            //console.log(response);
 
         }).fail(function (xhr, type, statusText) {
             console.log(xhr);
@@ -130,88 +132,139 @@ $(document).ready(function(){
 
     $('#sync_func_btn').off('click').on('click', function(target){
         
-        var promise = WebSiteDownload_sync();
-        console.log(promise);
-       // crawl_sync(promise);
-        crawl_sync_noPromise(promise);
-        assemblePDF_sync();
+        startSync()
     });
 
     $('#async_func_btn').off('click').on('click', function(target){
-        starteAsync();
+        startAsync();
     });
 
     /******************** Synchronous functions *******************/
 
-    function WebSiteDownload_sync(){
-        let promise = new Promise((resolve, reject) => {
-            
-            setTimeout(() => {
-                console.log("WebSiteDownload_sync executed" )
-                resolve("https://adobe.com")
-            }, 2700)
-        });
-        return promise;
+    function startSync(){
+        listSync();
        
     }
 
-    function crawl_sync_noPromise(result){
-        setTimeout(() => {          
-            var siteName = result;
-            console.log(siteName);
-            console.log("crawl_sync_noPromise executed for " + siteName );
-        }, 4300);
-    }
-
-    function crawl_sync(promise){
-        setTimeout(() => {
-            promise.then(function(result){
-                var siteName = result;
-                console.log(siteName);
-                console.log("crawl_sync executed for " + siteName );
+    function listSync() {
+        const userGet = "https://api.github.com/search/users?page=1&q=cfclick&type=Users"
+        
+        const users = request(userGet);
+        const usersList = JSON.parse(users).items
+        
+            usersList.forEach(async function (user) {
+                const repos = request(user.repos_url)
+          
+                handleRepoList(user, repos)
             });
+         /*var myPromise = MakeQuerablePromise(users);
+       
+       if( myPromise.isFulfilled() ){
+            const usersList = JSON.parse(users).items
+        
+            usersList.forEach(async function (user) {
+                const repos = request(user.repos_url)
+          
+                handleRepoList(user, repos)
+            });
+        }else{
+            console.log("Initial rejected:", myPromise.isRejected());//false
+            console.log("Initial pending:", myPromise.isPending());//true
+
             
-        }, 4300);
-    }
+        }
 
-    function assemblePDF_sync(){
-        setTimeout(() => {
-            console.log("assemblePDF_sync executed")
-        }, 10000);
+        myPromise.then(function(data){
+            console.log(data); // "Yeah !"
+            console.log("Final fulfilled:", myPromise.isFulfilled());//true
+            console.log("Final rejected:", myPromise.isRejected());//false
+            console.log("Final pending:", myPromise.isPending());//false
+        })*/
+        
     }
-
 
     /******************** A Synchronous functions *******************/
-
-    async function starteAsync(){
-        var siteName = await WebSiteDownload();//.then(crawl).then(assemblePDF);
-        await crawl(siteName);
-        await assemblePDF();
+   
+    async function startAsync(){
+        list();
+        /*const siteName = WebSiteDownload();//.then(crawl).then(assemblePDF);
+        crawl(await siteName);
+        await assemblePDF();*/
     }
 
-    async function WebSiteDownload(){
-        let promise = new Promise((resolve, reject) => {
-            setTimeout(() => {
-                console.log("WebSiteDownload ASYNC executed" )
-                resolve("https://adobe.com")
-            }, 2700)
+    function request(url) {
+        let prom = new Promise( function( resolve, reject ) {
+            const xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function(e) {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        resolve(xhr.response)
+                    } else {
+                        reject(xhr.status)
+                    }
+                }
+            }
+            xhr.ontimeout = function () {
+                reject('timeout')
+            }
+            xhr.open('get', url, true)
+            xhr.send()
         });
-        return promise;
-        /*return setTimeout(() => {
-            console.log("WebSiteDownload executed");
-            return "";
-        }, 2700);*/
+
+        return prom;
     }
 
-    async function crawl(siteName){
-        setTimeout(() => {
-            console.log("crawl ASYNC executed for " + siteName )
-        }, 4300);
+    async function list() {
+        const userGet = "https://api.github.com/search/users?page=1&q=cfclick&type=Users"
+        
+        const users = await request(userGet)
+        const usersList = JSON.parse(users).items
+        
+        usersList.forEach(async function (user) {
+          const repos = await request(user.repos_url)
+          
+          handleRepoList(user, repos)
+        })
     }
 
-    async function assemblePDF(){
-        setTimeout(() => {
-            console.log("assemblePDF ASYNC executed")
-        }, 10000);
+    function handleRepoList(user, repos) {
+        const userRepos = JSON.parse(repos)
+        
+        // Handle each individual user repo here
+        console.log(user, userRepos)
     }
+
+    /**
+ * This function allow you to modify a JS Promise by adding some status properties.
+ * Based on: http://stackoverflow.com/questions/21485545/is-there-a-way-to-tell-if-an-es6-promise-is-fulfilled-rejected-resolved
+ * But modified according to the specs of promises : https://promisesaplus.com/
+ */
+function MakeQuerablePromise(promise) {
+    // Don't modify any promise that has been already modified.
+    if (promise.isResolved) return promise;
+
+    // Set initial state
+    var isPending = true;
+    var isRejected = false;
+    var isFulfilled = false;
+
+    // Observe the promise, saving the fulfillment in a closure scope.
+    var result = promise.then(
+        function(v) {
+            isFulfilled = true;
+            isPending = false;
+            return v; 
+        }, 
+        function(e) {
+            isRejected = true;
+            isPending = false;
+            throw e; 
+        }
+    );
+
+    result.isFulfilled = function() { return isFulfilled; };
+    result.isPending = function() { return isPending; };
+    result.isRejected = function() { return isRejected; };
+    return result;
+}
 });
