@@ -3,13 +3,13 @@ function Coin(){
     coin = this;
     this.arrayOfDataTable           = [];
     this.arrayOfHistoricalPrice     = [];
-    this.arrayOfHistoricalPrice2     = [];
+    this.arrayOfHistoricalPrice2    = [];
     this.OtherExchPrice             = {};
     this.totalBTCSold               = 0;
     this.totalBTCBuy                = 0;
     this.totalBTCDiff               = 0;
     this.BTCPrice                   = 0;
-    this.DashPrice                   = 0;
+    this.DashPrice                  = 0;
     this.LTCPrice                   = 0;
     this.ZECPrice                   = 0;
 
@@ -53,15 +53,20 @@ function Coin(){
     $('.mdb-select').material_select();
 
     (async (f1) => {
-        await f1.listAllCryptocurrenciesasync().then( f1.renderDataTable() ); 
+        f1.listAllCryptocurrenciesasync(); 
+        await f1.listHistoricalData();
     })(this);
 
-    
-    this.loadHistoricalData( this );
+    (async (f1) => {
+        await f1.getSocialStats(1182); 
+        await f1.getCryptoNewsFeed('2018-09-26');
+    })(this);
 
    // this.loadHistoricalData();
-    this.getOrders();
-   
+    (async (f1) => {
+        f1.getOrders();
+    })(this);
+
     this.setEventListener();
 
 }
@@ -73,7 +78,7 @@ Coin.prototype.setEventListener = function(){
         // show price updates
         if (data.type == "price" && data.value.exchange=="bitstamp") {
           coin.BTCPrice =   data.value.price;
-          coin.renderPieChart();
+         
           $('span#csprice').replaceWith('<span id="csprice">$' + data.value.price + ' ' + data.value.price_base+'</span>')
           $('#time_updated_btc').html('Last Time updated: ' + coin.unix_timestampToDateTime(data.value.time) );
           $('#sym_btc_cur').html(data.value.symbol );         
@@ -85,39 +90,39 @@ Coin.prototype.setEventListener = function(){
         // show price updates
         if (data.type == "price" && data.value.exchange=="bitstamp") {
             coin.LTCPrice =   data.value.price;
-            coin.renderPieChart();
+           
           $('#time_updated_ltc').html('Last Time updated: ' + coin.unix_timestampToDateTime( data.value.time ) );
           $('span#csprice_ltc').replaceWith('<span id="csprice_ltc">$' + data.value.price + ' ' +  data.value.price_base+'</span>')
         }
-      });
+    });
   
-      coin.ticker_dash.bind('price_update', function(data) {
+    coin.ticker_dash.bind('price_update', function(data) {
         // show price updates
         if (data.type == "price" && data.value.exchange=="bitfinex") {
             coin.DashPrice =   data.value.price;
-            coin.renderPieChart();
+            
             $('#time_updated_dash').html('Last Time updated: ' + coin.unix_timestampToDateTime( data.value.time ) );
           $('span#csprice_dash').replaceWith('<span id="csprice_dash">$' + data.value.price + ' ' +  data.value.price_base+'</span>')
         }
-      });
+    });
   
-      coin.ticker_zcash.bind('price_update', function(data) {
+    coin.ticker_zcash.bind('price_update', function(data) {
         // show price updates
         if (data.type == "price" && data.value.exchange=="bitfinex") {
             coin.ZECPrice=   data.value.price;
-            coin.renderPieChart();
+          
             $('#time_updated_zec').html('Last Time updated: ' + coin.unix_timestampToDateTime( data.value.time ) );
           $('span#csprice_zcash').replaceWith('<span id="csprice_zcash">$' + data.value.price + ' ' +  data.value.price_base+'</span>')
         }
-      });
+    });
   
-      coin.ticker_dogecoin.bind('price_update', function(data) {
+    coin.ticker_dogecoin.bind('price_update', function(data) {
         // show price updates
         if (data.type == "price" && data.value.exchange=="bitstamp") {
             $('#time_updated_doge').html('Last Time updated: ' + coin.unix_timestampToDateTime( data.value.time ) );
           $('span#csprice_dogecoin').replaceWith('<span id="csprice_dogecoin">$' + data.value.price + ' ' +  data.value.price_base +'</span>')
         }
-      });
+    });
   
     
     coin.ticker_update_btc.bind('tx_update', function(data) {
@@ -153,17 +158,13 @@ Coin.prototype.setEventListener = function(){
     });
     
     
-    coin.load_data_btn.off('click').on('click', () => {
-       
-        (async (f1) => {
-            await f1.listAllCryptocurrenciesasync().then( f1.renderDataTable() ); 
-        })(this);
-
+    coin.load_data_btn.off('click').on('click', async () => {
+        await coin.listAllCryptocurrenciesasync();//.then( f1.renderDataTable() ); 
     });
 
-    coin.select_history_year.off('change').on('change', (event) =>{
+    coin.select_history_year.off('change').on('change', async (event) =>{
         
-        coin.loadHistoricalData( coin );
+        await coin.listHistoricalData();
         
     });
 
@@ -209,12 +210,8 @@ Coin.prototype.setEventListener = function(){
     });
 }
 
-Coin.prototype.loadHistoricalData = async (f2) => {
 
-    await f2.listHistoricalData().then( f2.renderChart() ); 
-}
-
-Coin.prototype.getOrders = function(){
+Coin.prototype.getOrders = async () => {
 
     $.each(['order_created', 'order_changed', 'order_deleted'], function (eventIndex, eventName) {
         coin.ordersChannel.bind(eventName, function (data) {
@@ -238,33 +235,42 @@ Coin.prototype.getOrders = function(){
             coin.totalBTCDiff = coin.totalBTCBuy - coin.totalBTCSold;
             coin.btc_diff.html( coin.totalBTCDiff );
             coin.placeholder.append('<li class="text-small ' + cl + '">[' + eventName + '] (' + coin.unix_timestampToDateTime(data.datetime) + ') ' + data.id + ': ' + data.amount + ' BTC @ ' + data.price + ' USD ' + ((data.order_type == 0) ? 'BUY' : 'SELL') + '</li>');
-            
-           // coin.renderPieChart();
 
-            
         });
     });
 
 }
 
-Coin.prototype.listAllCryptocurrenciesasync = async function(){
-    $.ajax({
-        type: "get",
-        url: "http://localhost/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=listAllCryptocurrencies",
-       
-        beforeSend: function (xhr) {
-          
-        },
-        async: false
-    }).done(function (response) {
-       
-        coin.arrayOfDataTable = JSON.parse(response);
-       
-        
-    }).fail(function (xhr) {
-        console.log(xhr);
-   
+Coin.prototype.request = (url) => {
+
+    let prom = new Promise( function( resolve, reject ) {
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function(e) {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    resolve(xhr.response)
+                } else {
+                    reject(xhr.status)
+                }
+            }
+        }
+        xhr.ontimeout = function () {
+            reject('timeout')
+        }
+        xhr.open('get', url, true)
+        xhr.send()
     });
+
+    return prom;
+
+}
+
+Coin.prototype.listAllCryptocurrenciesasync = async function(){
+
+    const AllCryptocurrenciesGet = "http://localhost/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=listAllCryptocurrencies";       
+    const Crypto = await coin.request(AllCryptocurrenciesGet);
+    coin.arrayOfDataTable = JSON.parse(Crypto);
+    coin.renderDataTable( coin.arrayOfDataTable );
 }
 
 Coin.prototype.renderDataTable = async function(){
@@ -352,6 +358,48 @@ Coin.prototype.renderDataTable = async function(){
 }
 
 Coin.prototype.listHistoricalData = async function(){
+
+    let history_year = coin.select_history_year.val();
+
+    if(history_year == null){
+        history_year = 2018;
+    }
+
+    let previous_year = history_year - 1;
+    const historicalDataGet = "http://localhost/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=listHistoricalData&theYear=" + history_year;
+    const historicalDataGet2 = "http://localhost/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=listHistoricalData&theYear=" + previous_year;       
+    const response  = await coin.request(historicalDataGet);
+    const response2 = await coin.request(historicalDataGet2);
+    const arrayOflistHistoricalData = JSON.parse(response);
+    const arrayOflistHistoricalData2 = JSON.parse(response2);
+
+    coin.arrayOfHistoricalPrice = [];
+    arrayOflistHistoricalData.forEach(element => {
+        let elem = JSON.parse(element);
+        if( elem.success){
+            if( typeof elem.rates != 'undefined'  )         
+                coin.arrayOfHistoricalPrice.push(elem.rates.BTC);
+        }else{
+           console.log(elem.error.info);
+        }
+    });
+
+    coin.arrayOfHistoricalPrice2 = [];
+    arrayOflistHistoricalData2.forEach(element => {
+        let elem = JSON.parse(element);
+        if( elem.success){
+            if( typeof elem.rates != 'undefined'  )         
+                coin.arrayOfHistoricalPrice2.push(elem.rates.BTC);
+        }else{
+           console.log(elem.error.info);
+        }
+    });
+
+    coin.renderChart();
+
+    /*
+    coin.renderDataTable( coin.arrayOfDataTable );
+
     let history_year = coin.select_history_year.val();
 
     if(history_year == null){
@@ -420,12 +468,12 @@ Coin.prototype.listHistoricalData = async function(){
     }).fail(function (xhr) {
         console.log(xhr);
    
-    });
+    });*/
 
 
 }
 
-Coin.prototype.renderChart = async function( historyList ){
+Coin.prototype.renderChart = async () =>{
       //Main chart
       let history_year = coin.select_history_year.val();
 
@@ -524,11 +572,10 @@ Coin.prototype.renderChart = async function( historyList ){
       });
 }
 
+/*
 Coin.prototype.renderPieChart = async () => {
 
-
-    
-    var dataPie = [{
+    let dataPie = [{
         value: 300,
         color: "#4caf50",
         highlight: "#66bb6a",
@@ -545,7 +592,7 @@ Coin.prototype.renderPieChart = async () => {
         label: "Firefox"
     }]
     //pie  
-    var ctxP = document.getElementById("doughnutChart").getContext('2d');
+    let ctxP = document.getElementById("doughnutChart").getContext('2d');
     var myPieChart = new Chart(ctxP, {
         type: 'doughnut',
         data: {
@@ -563,7 +610,7 @@ Coin.prototype.renderPieChart = async () => {
         }
     });
 
-}
+}*/
 
 Coin.prototype.getPriceFromExchages = async (ticker) => {
 
@@ -586,6 +633,20 @@ Coin.prototype.getPriceFromExchages = async (ticker) => {
    
     });
 
+}
+
+Coin.prototype.getSocialStats = async (id) =>{
+    const socialstatsGet = "http://localhost/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=getSocialStats&id="+id;       
+    const response = await coin.request(socialstatsGet);
+    const socialStatsData = JSON.parse(response);
+    console.log(socialStatsData);
+}
+
+Coin.prototype.getCryptoNewsFeed = async (dateString) =>{
+    const cryptoNewsFeedGet = "http://localhost/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=getCryptoNewsFeed&dateString="+dateString;       
+    const response = await coin.request(cryptoNewsFeedGet);
+    const cryptoNewsFeedData = JSON.parse(response);
+    console.log(cryptoNewsFeedData);
 }
 
 Coin.prototype.unix_timestampToDateTime = ( unix_timestamp )  =>  {

@@ -104,6 +104,19 @@ component  output="false"
 		
 	}
 	
+	remote any function getSocialStats(required numeric id) returnformat="JSON" {
+		cfhttp( url="https://www.cryptocompare.com/api/data/socialstats/?id=#arguments.id#", method="get", result="mydata" );
+			
+		return mydata.FileContent;
+	}  
+	
+	remote any function getCryptoNewsFeed(required string dateString) returnformat="JSON" {
+		
+		cfhttp( url="https://newsapi.org/v2/everything?q=bitcoin&from=#arguments.dateString#&sortBy=publishedAt&apiKey=34f5883793f14654bc94fcbd9ec3c56d", method="get", result="mydata" );
+			
+		return mydata.FileContent;
+	}  
+	
 	private void function saveToJSONFile( required string name, required any data ){
 		
 		fileWrite( name, serializeJSON( data )	) ;
