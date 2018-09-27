@@ -28,6 +28,8 @@ function Coin(){
     this.btc_diff                   = $('#btc_diff');
     this.btn_stream                 = $('#btn_stream');
     this.news_feed                  = $('#news_feed');
+    this.btc_deals_progress         = $('#btc_deals_progress');
+    this.prog_percent               = $('#prog_percent');
     
     this.pusher_02                  = new Pusher('de504dc5763aeef9ff52');
     this.ordersChannel              = this.pusher_02.subscribe('live_orders');
@@ -225,6 +227,10 @@ Coin.prototype.getOrders = async () => {
             {
                 coin.totalBTCSold += data.amount;
                 coin.btc_sales.html( coin.totalBTCSold );
+                //coin.btc_deals_progress.css('width: ' + coin.totalBTCSold  + '%');
+                //$( "#result" ).html( "That div is <span style='color:" + color + ";'>" + color + "</span>." );
+                $( "#btc_progress" ).html('<div id="btc_deals_progress" class="progress-bar bg grey darken-3" role="progressbar" style="width:' + coin.totalBTCSold/100  + '%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="10000"></div>');
+                coin.prog_percent.html( coin.totalBTCSold/100 );
                 cl = "danger-color";
             }
             else
@@ -397,81 +403,6 @@ Coin.prototype.listHistoricalData = async function(){
     });
 
     coin.renderChart();
-
-    /*
-    coin.renderDataTable( coin.arrayOfDataTable );
-
-    let history_year = coin.select_history_year.val();
-
-    if(history_year == null){
-        history_year = 2018;
-    }
-    let previous_year = history_year - 1;
-
-    $.ajax({
-        type: "get",
-        url: "http://localhost/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=listHistoricalData&theYear=" + history_year,
-       
-        beforeSend: function (xhr) {
-          
-        },
-        async: false
-    }).done(function (response) {
-        coin.arrayOfHistoricalPrice = [];
-        let arrayOflistHistoricalData = JSON.parse(response);
-        
-        arrayOflistHistoricalData.forEach(element => {
-            let elem = JSON.parse(element);
-           // console.log(elem.rates);
-           if( elem.success){
-                if( typeof elem.rates != 'undefined'  )         
-                    coin.arrayOfHistoricalPrice.push(elem.rates.BTC);
-           }else{
-               console.log(elem.error.info);
-           }
-            
-
-            return coin.arrayOfHistoricalPrice;
-        });
-        
-    }).fail(function (xhr) {
-        console.log(xhr);
-   
-    });
-
-
-    $.ajax({
-        type: "get",
-        url: "http://localhost/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=listHistoricalData&theYear=" + previous_year,
-       
-        beforeSend: function (xhr) {
-          
-        },
-        async: false
-    }).done(function (response) {
-        coin.arrayOfHistoricalPrice2 = [];
-        let arrayOflistHistoricalData = JSON.parse(response);
-        
-        arrayOflistHistoricalData.forEach(element => {
-            let elem = JSON.parse(element);
-           // console.log(elem.rates);
-           if( elem.success){
-                if( typeof elem.rates != 'undefined'  )         
-                    coin.arrayOfHistoricalPrice2.push(elem.rates.BTC);
-           }else{
-               console.log(elem.error.info);
-           }
-            
-
-            return coin.arrayOfHistoricalPrice2;
-        });
-        
-    }).fail(function (xhr) {
-        console.log(xhr);
-   
-    });*/
-
-
 }
 
 Coin.prototype.renderChart = async () =>{
@@ -640,6 +571,12 @@ Coin.prototype.getSocialStats = async (id) =>{
     const socialstatsGet = "http://localhost/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=getSocialStats&id="+id;       
     const response = await coin.request(socialstatsGet);
     const socialStatsData = JSON.parse(response);
+
+    socialStatsData.Data.CryptoCompare.SimilarItems.forEach(element => {
+        $("#crypto_images").append('<img src="https://www.cryptocompare.com/' + element.ImageUrl + '" class="rounded-circle avatar-img z-depth-1-half" width="50px" height="50px" style="margin:10px">');        
+    });
+
+   // $("#img").attr('src', 'https://www.cryptocompare.com/' + socialStatsData.Data.CryptoCompare.SimilarItems[1].ImageUrl);
     console.log(socialStatsData);
 }
 
@@ -647,6 +584,7 @@ Coin.prototype.getCryptoNewsFeed = async (dateString) => {
     const cryptoNewsFeedGet = "http://localhost/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=getCryptoNewsFeed&dateString="+dateString;       
     const response = await coin.request(cryptoNewsFeedGet);
     const cryptoNewsFeedData = JSON.parse(response);
+   
    // console.log(cryptoNewsFeedData);
 
     cryptoNewsFeedData.articles.forEach(element => {
