@@ -213,7 +213,6 @@ Coin.prototype.setEventListener = function(){
     });
 }
 
-
 Coin.prototype.getOrders = async () => {
 
     $.each(['order_created', 'order_changed', 'order_deleted'], function (eventIndex, eventName) {
@@ -503,46 +502,6 @@ Coin.prototype.renderChart = async () =>{
           }
       });
 }
-
-/*
-Coin.prototype.renderPieChart = async () => {
-
-    let dataPie = [{
-        value: 300,
-        color: "#4caf50",
-        highlight: "#66bb6a",
-        label: "Google Chrome"
-    }, {
-        value: 50,
-        color: "#03a9f4",
-        highlight: "#29b6f6",
-        label: "Edge"
-    }, {
-        value: 100,
-        color: "#d32f2f",
-        highlight: "#e53935",
-        label: "Firefox"
-    }]
-    //pie  
-    let ctxP = document.getElementById("doughnutChart").getContext('2d');
-    var myPieChart = new Chart(ctxP, {
-        type: 'doughnut',
-        data: {
-            labels: ["BTC", "DASH", "ZEC", "LTC"],
-            datasets: [
-                {
-                    data: [coin.BTCPrice, coin.DashPrice, coin.ZECPrice, coin.LTCPrice],
-                    backgroundColor: ["#4285F4", "#ffbb33", "#29b6f6", "#FF5252"],
-                    hoverBackgroundColor: ["#6ea0f2", "#fec451", "#52c3f6", "#fa6e6e"]
-                }
-            ]
-        },
-        options: {
-            responsive: true
-        }
-    });
-
-}*/
 
 Coin.prototype.getPriceFromExchages = async (ticker) => {
 
