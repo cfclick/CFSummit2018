@@ -27,6 +27,7 @@ function Coin(){
     this.btc_buy                    = $('#btc_buy');
     this.btc_diff                   = $('#btc_diff');
     this.btn_stream                 = $('#btn_stream');
+    this.news_feed                  = $('#news_feed');
     
     this.pusher_02                  = new Pusher('de504dc5763aeef9ff52');
     this.ordersChannel              = this.pusher_02.subscribe('live_orders');
@@ -642,11 +643,25 @@ Coin.prototype.getSocialStats = async (id) =>{
     console.log(socialStatsData);
 }
 
-Coin.prototype.getCryptoNewsFeed = async (dateString) =>{
+Coin.prototype.getCryptoNewsFeed = async (dateString) => {
     const cryptoNewsFeedGet = "http://localhost/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=getCryptoNewsFeed&dateString="+dateString;       
     const response = await coin.request(cryptoNewsFeedGet);
     const cryptoNewsFeedData = JSON.parse(response);
-    console.log(cryptoNewsFeedData);
+   // console.log(cryptoNewsFeedData);
+
+    cryptoNewsFeedData.articles.forEach(element => {
+        coin.news_feed.append('<a href="#" class="list-group-item list-group-item-action flex-column align-items-start">' +
+        '<div class="d-flex w-100 justify-content-between">' +
+          '<h5 class="mb-1">' + element.title + '</h5>' +
+          '<small>' + element.publishedAt + '</small>' +
+        '</div>' +
+       
+        '</a></div>');
+    });
+    /*  '<p class="mb-1">' + element.description + '</p>'+
+        '<small>' + element.source.name + '</small>' + */
+
+    
 }
 
 Coin.prototype.unix_timestampToDateTime = ( unix_timestamp )  =>  {

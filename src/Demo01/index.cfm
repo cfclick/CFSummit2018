@@ -27,9 +27,7 @@
                 <li class="list-group-item list-group-item-action">
                     <a href="http://localhost/CFSummit2018/src/Demo01/asyncFunc.cfm" >asyncFunc</a>
                 </li>
-                <li class="list-group-item list-group-item-action">
-                    <a href="http://localhost/CFSummit2018/src/Demo01/asyncFunc.cfm" >asyncFunc</a>
-                </li>
+                
             </ul>
             
         </div>    
