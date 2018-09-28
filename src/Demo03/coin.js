@@ -30,6 +30,8 @@ function Coin(){
     this.news_feed                  = $('#news_feed');
     this.btc_deals_progress         = $('#btc_deals_progress');
     this.prog_percent               = $('#prog_percent');
+    this.prog_percent2              = $('#prog_percent2');
+    this.prog_percent3              = $('#prog_percent3');
     
     this.pusher_02                  = new Pusher('de504dc5763aeef9ff52');
     this.ordersChannel              = this.pusher_02.subscribe('live_orders');
@@ -214,7 +216,9 @@ Coin.prototype.setEventListener = function(){
 }
 
 Coin.prototype.getOrders = async () => {
-
+    btSell  = 0;
+    btBuy   = 0;
+    btdiff  = 0;
     $.each(['order_created', 'order_changed', 'order_deleted'], function (eventIndex, eventName) {
         coin.ordersChannel.bind(eventName, function (data) {
             if ($('ol li').length > 30) {
@@ -226,25 +230,56 @@ Coin.prototype.getOrders = async () => {
             {
                 coin.totalBTCSold += data.amount;
                 coin.btc_sales.html( coin.totalBTCSold );
-                //coin.btc_deals_progress.css('width: ' + coin.totalBTCSold  + '%');
-                //$( "#result" ).html( "That div is <span style='color:" + color + ";'>" + color + "</span>." );
-                $( "#btc_progress" ).html('<div id="btc_deals_progress" class="progress-bar bg grey darken-3" role="progressbar" style="width:' + coin.totalBTCSold/100  + '%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="10000"></div>');
+                btSell = coin.totalBTCSold;
+                $( "#btc_progress" ).html('<div id="btc_deals_progress" class="progress-bar bg grey darken-3" role="progressbar" style="width:' + coin.totalBTCSold/100  + '%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="1000"></div>');
                 coin.prog_percent.html( coin.totalBTCSold/100 );
                 cl = "danger-color";
             }
             else
             {
+               
                 coin.totalBTCBuy += data.amount;
                 coin.btc_buy.html( coin.totalBTCBuy );
+                $( "#btc_progress2" ).html('<div id="btc_deals_progress2" class="progress-bar bg grey darken-3" role="progressbar" style="width:' + coin.totalBTCBuy/100  + '%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="1000"></div>');
+                coin.prog_percent2.html( coin.totalBTCBuy/100 );
+                btBuy = coin.totalBTCSold;
             }
 
             coin.totalBTCDiff = coin.totalBTCBuy - coin.totalBTCSold;
+            btdiff = coin.totalBTCDiff;
+            $( "#btc_progress3" ).html('<div id="btc_deals_progress3" class="progress-bar bg grey darken-3" role="progressbar" style="width:' + coin.totalBTCSold/100  + '%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="1000"></div>');
+            coin.prog_percent3.html( coin.totalBTCDiff/100 );
             coin.btc_diff.html( coin.totalBTCDiff );
             coin.placeholder.append('<li class="text-small ' + cl + '">[' + eventName + '] (' + coin.unix_timestampToDateTime(data.datetime) + ') ' + data.id + ': ' + data.amount + ' BTC @ ' + data.price + ' USD ' + ((data.order_type == 0) ? 'BUY' : 'SELL') + '</li>');
 
+            setTimeout( function(){
+                console.log(btSell,btBuy,btdiff);
+                coin.saveOrders(btSell,btBuy,btdiff);
+            },10000);
         });
+
+        
     });
 
+    
+}
+
+Coin.prototype.saveOrders = async (btSell,btBuy,btdiff) =>{
+
+    $.ajax({
+        type: "get",
+        url: "http://localhost/CFSummit2018/src/cfcs/CoinMarketCap.cfc?method=saveOders&salePrice=" + btSell + "&buyPrice=" + btBuy + "&diffInPrice=" + btdiff ,
+        beforeSend: function (xhr) {
+          
+        },
+        async: true
+    }).done(function (response) {
+       console.log("order saved");
+
+    }).fail(function (xhr) {
+        console.log(xhr);
+   
+    });
 }
 
 Coin.prototype.request = (url) => {

@@ -13,7 +13,6 @@ component  output="false"
 	
 	remote any function listHistoricalData(string theYear='2018') returnformat="JSON"   {
 		
-		writelog(theYear);
 		var dataDirectoryAndFile = getDirectoryFromPath( getCurrentTemplatePath() ) & "\#theYear#_listAllCryptocurrencies.json";
 		
 		if( cacheIdExists("#theYear#_listAllCryptocurrencies") )
@@ -115,6 +114,43 @@ component  output="false"
 		cfhttp( url="https://newsapi.org/v2/everything?q=bitcoin&from=#arguments.dateString#&sortBy=publishedAt&apiKey=34f5883793f14654bc94fcbd9ec3c56d", method="get", result="mydata" );
 			
 		return mydata.FileContent;
+	} 
+	
+	remote any function saveOders(required numeric salePrice, required numeric buyPrice, required numeric diffInPrice) returnformat="JSON" {
+		try
+        {
+        	runAsync(function(){
+        		var fileName = "orders-" & DateFormat(now(),'mm-dd-yyyy') & '.json';
+				var pathAndName = "C:\\inetpub\\wwwroot\\CFSummit2018\\repository\\" & fileName;
+				writelog( text=pathAndName, type="INFO"  );
+				var data = [];
+				if( !fileExists( pathAndName ) )
+				{
+					data.append({ "sellPrice":salePrice,
+							"buyPrice":buyPrice,
+							"diffInPrice":diffInPrice});
+					fileWrite(pathAndName, serializeJSON(data));
+				}
+				else
+				{
+					data = deserializeJSON(fileRead( pathAndName));
+					data.append({ "sellPrice":salePrice,
+							"buyPrice":buyPrice,
+							"diffInPrice":diffInPrice});
+					fileDelete(pathAndName);
+					fileWrite(pathAndName, serializeJSON(data));
+				}
+	        }).error(function(e){
+	        	writelog( text=e.message, type="ERROR"  );
+	        });
+        	
+        }
+        catch(Any e)
+        {
+        	writelog( text=e.message, type="ERROR"  );
+        }
+
+		
 	}  
 	
 	private void function saveToJSONFile( required string name, required any data ){
