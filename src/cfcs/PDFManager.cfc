@@ -6,7 +6,7 @@ component  output="false"
 	
 	public void function assemblePDF(){
 		pdf = new PDF();
-		pdf.setDestination( "C:\inetpub\wwwroot\CFSummit2018\documents_process\Verdugo_Insurance.pdf" )
+		pdf.setDestination( "C:\inetpub\wwwroot\CFSummit2018\documents_process\Verdugo_Insurance1.pdf" )
 		.setOverwrite(true)
 		.setPackage(true);
 		pdf.addParam(source= "C:\inetpub\wwwroot\CFSummit2018\assets\cover_letter.docx");

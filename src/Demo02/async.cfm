@@ -15,14 +15,19 @@
 	});
 	
 	//Create instance of WebCrawler
-	/*crawler = new cfcs.WebCrawler();
+	/*crawFuture = runAsync( function(){
+		
+		return result;
+	});*/
+	
+	crawler = new cfcs.WebCrawler();
 	//Inject websites url into the constructor
-	crawler.crawl('https://amazon.com');	
-	crawler.crawl('https://foxnews.com');
-	crawler.crawl('https://cnn.com');	
-	crawler.crawl('https://adobe.com');	
-	result = crawler.crawl('https://youtube.com');
-	*/
+		crawler.crawl('https://amazon.com');	
+		crawler.crawl('https://foxnews.com');
+		crawler.crawl('https://cnn.com');	
+		crawler.crawl('https://adobe.com');	
+		result = crawler.crawl('https://youtube.com');
+	
 	//Get tick time
 	endTick = gettickCount()/1000;
 	//duration of execution time from start to end
@@ -30,8 +35,8 @@
 	//priny out total duration
 	writeoutput("<h3>Total Async Execution Time: #duration#</h3>");
 	writeoutput("<br>");
-	
-	/*writeoutput("<h3>Wait for future to get the result back:</h3><br>");
+	/*
+	writeoutput("<h3>Wait for future to get the result back:</h3><br>");
 	startTick2 = gettickCount()/1000;
 	for( future in helper_future.get() ){
 		writeoutput(future.url);

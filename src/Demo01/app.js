@@ -13,7 +13,7 @@ $(document).ready(function(){
                 $('#sync_loader').html("<i class='fa fa-spinner fa-spin fa-3x'></i>");
                 $("#total_sync_duration").html("");
             },
-            async: true
+            async: false
         }).done(function (response) {
             $('#sync_loader').html("");
            result = JSON.parse(response);
@@ -41,6 +41,8 @@ $(document).ready(function(){
             $('#sync_result_div').html("Sorry error check console log");
             $("#total_sync_duration").html("");
         });
+
+        console.log("line executed...");
 
     });
 
@@ -84,6 +86,8 @@ $(document).ready(function(){
             $("#total_async_duration").html("");
         });
         
+        console.log("line executed...");
+
     });
 
     $('#async_await_btn').off('click').on('click', async function(target){
@@ -126,6 +130,9 @@ $(document).ready(function(){
             $("#total_async_await_duration").html("");
         });
         
+        console.log("line executed...");
+
+
     });
 
     /****************** Client function ******************/
